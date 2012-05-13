@@ -7,3 +7,5 @@ gem 'datamapper'
 gem 'dm-sqlite-adapter'
 
 gem 'sinatra-reloader'
+
+gem 'oauth', '0.4.5'

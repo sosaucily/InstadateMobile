@@ -11,13 +11,13 @@ class Activity
     property :category,         String
     property :duration,         Integer
     property :rating,           Float
-    property :source_category,   String
+    property :source_category,  Json
     property :name,             String
     property :start_time,       DateTime
     property :end_time,         DateTime
     property :source_venue_id,  String
-    property :image_url,        String
-    property :business_url,     String
+    property :image_url,        String,     :length => 200
+    property :business_url,     String,     :length => 200
     property :phone,            String
     property :address,          String
     property :city,             String
