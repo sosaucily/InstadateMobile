@@ -1,1 +1,12 @@
 Web application for mobile web version of the application
+
+This is a Sinatra based application.
+
+Using ruby 1.9.3
+
+Make sure you have bundler installed (gem install bundler)
+clone the project
+run `bundle install`
+run `rackup`
+
+The application is now running, and can be accessed from a mobile web browser.
