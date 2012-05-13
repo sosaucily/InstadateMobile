@@ -5,8 +5,12 @@ This is a Sinatra based application.
 Using ruby 1.9.3
 
 Make sure you have bundler installed (gem install bundler)
-clone the project
-run `bundle install`
-run `rackup`
+1. clone the project
+2. run `bundle install`
+
+3. If you haven't imported the www submodule yet, do the following
+  3a. At the root of this project's directory, run `git submodule update --init`
+
+4. run `rackup`
 
 The application is now running, and can be accessed from a mobile web browser.
