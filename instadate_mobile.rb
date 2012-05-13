@@ -19,21 +19,24 @@ class InstadateMobile < Sinatra::Base
   #Create or Update ORM tables if needed
   DataMapper.auto_upgrade!
 
+  #set :views, settings.root + '/'
+  set :public_folder, File.dirname(__FILE__) + '/www'
+
   get "/" do
-    @activity = Activity.new(
-	  :name      => "My first DataMapper post",
-	  :created_at => Time.now,
-	  :updated_at => Time.now
-	)
+    #@activity = Activity.new(
+	#  :name      => "My first DataMapper post",
+	#  :created_at => Time.now,
+	#  :updated_at => Time.now
+	#)
 
-	if @activity.save
-	else
-		@activity.errors.each do |e|
-			puts e
-		end
-	end
+	#if @activity.save
+	#else
+	#	@activity.errors.each do |e|
+	#		puts e
+	#	end
+	#end
 
-	erb :index
-
+	send_file File.join(settings.public_folder, 'index.html')
+	
   end
 end
