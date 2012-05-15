@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler'
-require 'sqlite3'
+if ENV['RACK_ENV'] != 'production'
+  require 'sqlite3'
+end
 require 'data_mapper'
 require 'dm-serializer'
 
