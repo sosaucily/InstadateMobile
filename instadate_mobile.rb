@@ -35,14 +35,14 @@ class InstadateMobile < Sinatra::Base
   #end
 
 	# If you want the logs displayed you have to do this before the call to setup
-  DataMapper::Logger.new($stdout, :debug)
+  #DataMapper::Logger.new($stdout, :debug)
 
 
   # An in-memory Sqlite3 connection:
   #DataMapper.setup(:default, 'sqlite::memory:')
 
   # A Sqlite3 connection to a persistent database
-  DataMapper.setup(:default, 'sqlite3:db/instadate.db')
+  DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3:db/instadate.db")
 
   #Drop and create all the ORM tables
   DataMapper.auto_migrate!
@@ -66,34 +66,34 @@ class InstadateMobile < Sinatra::Base
 	#		puts e
 	#	end
 	#end
-  logger.info "New Hit on Homepage"
+  #logger.info "New Hit on Homepage"
 
 	send_file File.join(settings.public_folder, 'index.html')
 
   end
 
   post "/story/create" do
-  	logger.info "params: " + params.inspect
+  	#logger.info "params: " + params.inspect
     #startts - endts - zip - lat - lon
     if (not params[:story_date] or params[:story_date] == "")
-    	logger.info "Couldn't find a date parameter, default to today"
+    	#logger.info "Couldn't find a date parameter, default to today"
       params[:story_date] = Date.today.strftime('%Y-%m-%d')
     end
 
-    logger.info "Creating Story!"
+    #logger.info "Creating Story!"
 
     @story = Story.new(:created_at => Time.now, :updated_at => Time.now, :zip => params[:zip_search], :latitude => params[:lat], :longitude => params[:lng],
                        :story_date => Date.parse(params[:story_date]), :daypart => params[:daypart], :indoor => params[:activity])
-    logger.info "base story results: " + @story.inspect
+    #logger.info "base story results: " + @story.inspect
     if @story.save
-      logger.info "Story Saved!" + @story.inspect
-      logger.info "Story has " + @story.activities.count.to_s + " activities"
+      #logger.info "Story Saved!" + @story.inspect
+      #logger.info "Story has " + @story.activities.count.to_s + " activities"
       return_story = @story.to_json(:methods => [:activities])
-      logger.info "Returning " + return_story.to_s
+      #logger.info "Returning " + return_story.to_s
       return return_story
     else
       @story.errors.each do |e|
-		    logger.info e
+		    #logger.info e
       end
 	  end
   end
