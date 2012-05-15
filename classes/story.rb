@@ -28,7 +28,7 @@ class Story
       #Rules engine takes our requirements (which are attributes on this object) and decides who many activities, and of what type, to create
       
       if InstadateMobile::MOCK_API_REQUESTS
-        InstadateMobile::LOGGER.info "MOCK_API_REQUESTS is set to true - Returning mock data."
+        #InstadateMobile::LOGGER.info "MOCK_API_REQUESTS is set to true - Returning mock data."
         mock_results
         return
       end
@@ -37,10 +37,10 @@ class Story
       #Create a list of activity requests
       activity_requests = get_activity_requests      
       activity_results = []
-      InstadateMobile::LOGGER.info ("activity_requests = " + activity_requests.inspect)
+      #InstadateMobile::LOGGER.info ("activity_requests = " + activity_requests.inspect)
       
       has_timed_event = false
-      InstadateMobile::LOGGER.info ("\n\n")
+      #InstadateMobile::LOGGER.info ("\n\n")
       if (zip.nil? or zip == "")
         location_parameters = { :lat => latitude, :long => longitude }
       else
@@ -52,32 +52,32 @@ class Story
         when 'day_eat'
           options = ['Yelp']
           query_parameters = VenueHelpers.get_day_eat_query_options.merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "eat")
         when 'evening_eat'
           options = ['Yelp']
           query_parameters = VenueHelpers.get_evening_eat_query_options().merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = evening_eat, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = evening_eat, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "eat")
         when 'day_do'
           options = ['Yelp']
           query_parameters = VenueHelpers.get_day_do_query_options(indoor).merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = day_do, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = day_do, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "do")
         when 'day_see'
           options = ['Yelp']
           query_parameters = VenueHelpers.get_day_see_query_options(indoor).merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = day_see, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = day_see, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "see")
         when 'evening_do'
           options = ['Yelp']
           query_parameters = VenueHelpers.get_evening_do_query_options(indoor).merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = evening_do, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = evening_do, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "do")
         when 'evening_see'
           #options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
@@ -88,23 +88,23 @@ class Story
             has_timed_event = true
             query_parameters[:date] = story_date
           end
-          InstadateMobile::LOGGER.info 'schedule = evening_see, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = evening_see, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "see")
         when 'night_do'
           options = ['Yelp']
-          InstadateMobile::LOGGER.info ("Total List is : " + VenueHelpers::NIGHT_DO.inspect)
+          #InstadateMobile::LOGGER.info ("Total List is : " + VenueHelpers::NIGHT_DO.inspect)
           query_parameters = VenueHelpers.get_night_do_query_options(indoor).merge location_parameters
-          InstadateMobile::LOGGER.info 'schedule = night_do, indoor = ' + indoor
-          InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+          #InstadateMobile::LOGGER.info 'schedule = night_do, indoor = ' + indoor
+          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(options, query_parameters, "do")
         end
       end      
-      InstadateMobile::LOGGER.info ("\n\n")
+      #InstadateMobile::LOGGER.info ("\n\n")
 
       activity_results.flatten!
       
-      InstadateMobile::LOGGER.info "Activity Results = " + activity_results.inspect
+      #InstadateMobile::LOGGER.info "Activity Results = " + activity_results.inspect
       
       #Coming Soon!
       #build_schedule(activity_results)
@@ -119,26 +119,26 @@ class Story
       
     #Create a set of activtiies for this date.
     def create_activities(activity_results)
-      InstadateMobile::LOGGER.info("Creating Activities")
+      #InstadateMobile::LOGGER.info("Creating Activities")
       #Create an activity based on the quantity of activities
       activity_results.each do |act_data|
-      	InstadateMobile::LOGGER.info("Creating activity " + act_data.inspect)
+      	#InstadateMobile::LOGGER.info("Creating activity " + act_data.inspect)
         #Also need to make sure the result is part of this request type?
         act_data[:created_at] = Time.now
         act_data[:updated_at] = Time.now
         act_data[:story] = self
         @new_act = Activity.new(act_data)
         if @new_act.save
-        	InstadateMobile::LOGGER.info("Activity Saved!")
+        	#InstadateMobile::LOGGER.info("Activity Saved!")
         	#self.activities << @new_act
         else
         	@new_act.errors.each do |e|
-		 	   InstadateMobile::LOGGER.info e
+		 	   #InstadateMobile::LOGGER.info e
       		end
       	end
       end
       #self.save
-	  InstadateMobile::LOGGER.info("Updated story with activities")
+	  #InstadateMobile::LOGGER.info("Updated story with activities")
     end
     
     def get_activity_requests
@@ -161,7 +161,7 @@ class Story
     end
 
     def mock_results
-    	InstadateMobile::LOGGER.info ("In Mock Results")
+    	#InstadateMobile::LOGGER.info ("In Mock Results")
       activity_results = []
 
       food_results = [{:phone => "+1-415-908-3801", :address => "706 Mission St", :city => "Walnut Creek", :latitude=>37.9018083, :longitude=>-122.0632224, :rating=>4.5, :source_category=>["Beer, Wine & Spirits", "Wine Bars"], :image_url=>'http://s3-media2.ak.yelpcdn.com/bphoto/ymEbmXmX-3QxebCa_KK-Tw/60s.jpg', :name=>"Residual Sugar", :source_venue_id=>"XB5zw_qGoR2orqvFh98UHA"},
@@ -190,10 +190,10 @@ class Story
       do_do[:category] = "do"
       activity_results << do_do
 
-      InstadateMobile::LOGGER.info ("Creating Activities in mock results")
+      #InstadateMobile::LOGGER.info ("Creating Activities in mock results")
 
       create_activities(activity_results)
-		InstadateMobile::LOGGER.info ("Done")
+		#InstadateMobile::LOGGER.info ("Done")
     end
 
 end

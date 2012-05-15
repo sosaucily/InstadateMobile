@@ -8,7 +8,7 @@ class Yelp
   RATING_THRESHOLD = 3.5
 
   def query(params = {})
-    InstadateMobile::LOGGER.debug "Querying Yelp API: #{params.inspect}"
+    #InstadateMobile::LOGGER.debug "Querying Yelp API: #{params.inspect}"
     check_parameters(params)
     yelp_params = build_params(params)
     
@@ -17,7 +17,7 @@ class Yelp
     #response = access_token.get("/v2/search?#{yelp_params.to_query}")
     yelp_params_as_query = URI.escape(yelp_params.collect{|k,v| "#{k}=#{v}"}.join('&'))
     response = access_token.get("/v2/search?#{yelp_params_as_query}")
-    InstadateMobile::LOGGER.debug "YELP Response: #{response.body}"
+    #InstadateMobile::LOGGER.debug "YELP Response: #{response.body}"
 
     return build_activities(response)
   end

@@ -7,10 +7,10 @@ class InstadateMobile < Sinatra::Base
   end
 
   configure :production, :development do
-    LOGGER = Logger.new("sinatra.log")
-    InstadateMobile::LOGGER = LOGGER
-    enable :logging, :dump_errors
-    set :raise_errors, true
+    #LOGGER = Logger.new("sinatra.log")
+    #InstadateMobile::LOGGER = LOGGER
+    #enable :logging, :dump_errors
+    #set :raise_errors, true
   end
 
   error do
@@ -28,11 +28,11 @@ class InstadateMobile < Sinatra::Base
       InstadateMobile::MOCK_API_REQUESTS = false
   end
 
-  helpers do
-    def InstadateMobile::logger
-      LOGGER
-    end
-  end
+  #helpers do
+  #  def InstadateMobile::logger
+  #    LOGGER
+  #  end
+  #end
 
 	# If you want the logs displayed you have to do this before the call to setup
   DataMapper::Logger.new($stdout, :debug)

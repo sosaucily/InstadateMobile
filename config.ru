@@ -17,10 +17,10 @@ Bundler.require
 
 require './instadate_mobile'
 
-log = File.new("sinatra.log", "a+")
-log.sync = true
-$stdout.reopen(log)
-$stderr.reopen(log)
+#log = File.new("sinatra.log", "a+")
+#log.sync = true
+#$stdout.reopen(log)
+#$stderr.reopen(log)
 
 run InstadateMobile
 
