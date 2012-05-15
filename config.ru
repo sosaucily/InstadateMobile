@@ -25,4 +25,3 @@ require './instadate_mobile'
 #$stderr.reopen(log)
 
 run InstadateMobile
-
