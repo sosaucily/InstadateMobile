@@ -21,7 +21,7 @@ class InstadateMobile < Sinatra::Base
   end
 
   configure :production do
-      InstadateMobile::MOCK_API_REQUESTS = true
+      InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   configure :development do
