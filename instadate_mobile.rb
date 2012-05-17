@@ -25,7 +25,7 @@ class InstadateMobile < Sinatra::Base
   end
 
   configure :development do
-      InstadateMobile::MOCK_API_REQUESTS = false
+      InstadateMobile::MOCK_API_REQUESTS = true
   end
 
   #helpers do
@@ -59,6 +59,11 @@ class InstadateMobile < Sinatra::Base
 	#  :created_at => Time.now,
 	#  :updated_at => Time.now
 	#)
+
+
+  user_agent =  request.env['HTTP_USER_AGENT'].downcase
+  On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
+  puts "is mobile = " + On_Mobile.to_s
 
 	#if @activity.save
 	#else
@@ -97,4 +102,5 @@ class InstadateMobile < Sinatra::Base
       end
 	  end
   end
+
 end
