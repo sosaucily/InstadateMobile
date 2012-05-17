@@ -67,7 +67,7 @@ class InstadateMobile < Sinatra::Base
     end
 
   end
-  
+
   get "/" do
     #@activity = Activity.new(
 	#  :name      => "My first DataMapper post",
