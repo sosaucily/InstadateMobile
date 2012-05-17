@@ -53,27 +53,42 @@ class InstadateMobile < Sinatra::Base
   #set :views, settings.root + '/'
   set :public_folder, File.dirname(__FILE__) + '/www'
 
+  On_Mobile = false
+  
+  before do
+    user_agent =  request.env['HTTP_USER_AGENT'].downcase
+    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
+    puts "is mobile = " + On_Mobile.to_s
+
+    if (On_Mobile)
+      #set :views, settings.root + '/'
+    else
+      #set :views, settings.root + '/'
+    end
+
+  end
+  
   get "/" do
     #@activity = Activity.new(
 	#  :name      => "My first DataMapper post",
 	#  :created_at => Time.now,
 	#  :updated_at => Time.now
 	#)
+    if (On_Mobile)
+      send_file File.join(settings.public_folder, 'index.html')
+    else
+      erb :index
+    end
+   
 
-
-  user_agent =  request.env['HTTP_USER_AGENT'].downcase
-  On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
-  puts "is mobile = " + On_Mobile.to_s
-
-	#if @activity.save
-	#else
-	#	@activity.errors.each do |e|
-	#		puts e
-	#	end
-	#end
-  #logger.info "New Hit on Homepage"
-
-	send_file File.join(settings.public_folder, 'index.html')
+  	#if @activity.save
+  	#else
+  	#	@activity.errors.each do |e|
+  	#		puts e
+  	#	end
+  	#end
+    #logger.info "New Hit on Homepage"
+    
 
   end
 
