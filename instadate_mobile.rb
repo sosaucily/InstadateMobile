@@ -25,7 +25,7 @@ class InstadateMobile < Sinatra::Base
   end
 
   configure :development do
-      InstadateMobile::MOCK_API_REQUESTS = true
+      InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   #helpers do
@@ -57,15 +57,7 @@ class InstadateMobile < Sinatra::Base
   
   before do
     user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
-    puts "is mobile = " + On_Mobile.to_s
-
-    if (On_Mobile)
-      #set :views, settings.root + '/'
-    else
-      #set :views, settings.root + '/'
-    end
-
+    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : true) 
   end
 
   get "/" do
@@ -94,6 +86,7 @@ class InstadateMobile < Sinatra::Base
 
   post "/story/create" do
   	#logger.info "params: " + params.inspect
+    puts ("request params: " + params.inspect)
     #startts - endts - zip - lat - lon
     if (not params[:story_date] or params[:story_date] == "")
     	#logger.info "Couldn't find a date parameter, default to today"
@@ -101,9 +94,14 @@ class InstadateMobile < Sinatra::Base
     end
 
     #logger.info "Creating Story!"
+    if (params[:zip_search].nil? or params[:zip_search] == "")
+      return "invalid location, please try again"
+    end
 
-    @story = Story.new(:created_at => Time.now, :updated_at => Time.now, :zip => params[:zip_search], :latitude => params[:lat], :longitude => params[:lng],
-                       :story_date => Date.parse(params[:story_date]), :daypart => params[:daypart], :indoor => params[:activity])
+    @story = Story.new(:created_at => Time.now, :updated_at => Time.now, :zip => params[:zip_search], 
+      :latitude => (params[:lat_search] == "" ? nil : params[:lat_search].to_f), 
+      :longitude => (params[:lng_search] == "" ? nil : params[:lng_search].to_f),
+      :story_date => Date.parse(params[:story_date]), :daypart => params[:daypart], :indoor => params[:activity])
     #logger.info "base story results: " + @story.inspect
     if @story.save
       #logger.info "Story Saved!" + @story.inspect
