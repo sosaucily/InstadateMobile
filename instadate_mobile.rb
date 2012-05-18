@@ -57,7 +57,7 @@ class InstadateMobile < Sinatra::Base
   
   before do
     user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
+    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : true) 
   end
 
   get "/" do
