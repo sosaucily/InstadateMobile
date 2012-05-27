@@ -22,10 +22,14 @@ class InstadateMobile < Sinatra::Base
 
   configure :production do
       InstadateMobile::MOCK_API_REQUESTS = false
+      config.logger = Logger.new(STDOUT) 
+      config.log_level = :info
   end
 
   configure :development do
       InstadateMobile::MOCK_API_REQUESTS = false
+      config.logger = Logger.new(STDOUT) 
+      config.log_level = :debug
   end
 
   #helpers do
