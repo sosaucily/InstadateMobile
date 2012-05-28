@@ -78,6 +78,7 @@ class Yelp
   def missing_required_param(test_activity)
     REQUIRED_PARAMETERS.each do |rqmt|
       return (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
+    end
     return false
   end
 
