@@ -15,7 +15,7 @@ class Activity
     property :name,             String
     property :start_time,       DateTime
     property :end_time,         DateTime
-    property :source_venue_id,  String
+    property :source_venue_id,  String,     :length => 200
     property :image_url,        String,     :length => 200
     property :business_url,     String,     :length => 200
     property :phone,            String
