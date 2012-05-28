@@ -133,7 +133,7 @@ class Story
         	#self.activities << @new_act
         else
         	@new_act.errors.each do |e|
-		 	   #InstadateMobile::LOGGER.info e
+		 	      puts e
       		end
       	end
       end
@@ -154,15 +154,16 @@ class Story
     end
 
     def fetch_random_result(the_system, query_params, category)
-      puts "Querying #{the_system} with params #{query_params.inspect} and category #{category}"
+      puts "Querying #{the_system} with params #{query_params.inspect}"
       service = Kernel.const_get(the_system).new
       results = service.query(query_params)
       #if (results.empty?)
       #  return nil
       #end
-      puts "Results of query has length #{results.length} and values #{results.inspect}"
+      puts "Results of query has length #{results.length}"
       query_result = results.shuffle[0]
       query_result[:category] = category
+      puts "Returning result #{query_result}"
       return query_result
     end
 
