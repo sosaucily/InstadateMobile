@@ -6,7 +6,7 @@ class Yelp
   OAUTH_ACCESS_SECRET = "h1QIIth-Qs2VCNGKlqpLjxKRqgU"
   ENDPOINT = "http://api.yelp.com/"
   RATING_THRESHOLD = 3.5
-  REQUIRED_PARAMETERS = ["image_url",{location:"address"},{location:"city"}]
+  REQUIRED_PARAMETERS = [:image_url,:address,:city]
 
   def query(params = {})
     #InstadateMobile::LOGGER.debug "Querying Yelp API: #{params.inspect}"
@@ -59,10 +59,10 @@ class Yelp
     businesses = JSON.parse(response.body)["businesses"]
     businesses.each do |business|
       next if business["rating"] < RATING_THRESHOLD
-      next if missing_required_param(business)
       activity_info = { :latitude => business["location"]["coordinate"]["latitude"], :longitude => business["location"]["coordinate"]["longitude"],
                         :rating => business["rating"], :source_category => business["categories"].map{ |cat| cat.first }, :name => business["name"],
                         :source_venue_id => business["id"], :image_url => business["image_url"], :business_url => business["mobile_url"], :phone => business["display_phone"], :address => business["location"]["address"][0], :city => business["location"]["city"] }
+      next if missing_required_param(activity_info)
       activities << activity_info
     end
 
@@ -77,15 +77,7 @@ class Yelp
 
   def missing_required_param(test_activity)
     REQUIRED_PARAMETERS.each do |rqmt|
-      if rqmt.is_a?(Hash)
-        if (test_activity[rqmt.keys[0].to_s][rqmt.values[0]] == nil || test_activity[rqmt.keys[0].to_s][rqmt.values[0]].empty?)
-          return true
-        end
-      else
-        return (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
-      end
-      return false
-    end
+      return (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
     return false
   end
 
