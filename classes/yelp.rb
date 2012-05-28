@@ -78,11 +78,11 @@ class Yelp
   def missing_required_param(test_activity)
     REQUIRED_PARAMETERS.each do |rqmt|
       if rqmt.is_a?(Hash)
-        if (test_activity[rqmt.keys[0].to_s][rqmt.values[0]] == nil)
+        if (test_activity[rqmt.keys[0].to_s][rqmt.values[0]] == nil || test_activity[rqmt.keys[0].to_s][rqmt.values[0]].empty?)
           return true
         end
       else
-        return (test_activity[rqmt] == nil)
+        return (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
       end
       return false
     end
