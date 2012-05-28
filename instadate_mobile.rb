@@ -57,7 +57,7 @@ class InstadateMobile < Sinatra::Base
   
   before do
     user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
+    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : true) 
   end
 
   get "/" do
@@ -105,7 +105,7 @@ class InstadateMobile < Sinatra::Base
     #logger.info "base story results: " + @story.inspect
     if @story.save
       #logger.info "Story Saved!" + @story.inspect
-      #logger.info "Story has " + @story.activities.count.to_s + " activities"
+      puts "Story has " + @story.activities.count.to_s + " activities"
       return_story = @story.to_json(:methods => [:activities])
       #logger.info "Returning " + return_story.to_s
       return return_story
