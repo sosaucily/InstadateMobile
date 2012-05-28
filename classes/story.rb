@@ -160,6 +160,7 @@ class Story
       #if (results.empty?)
       #  return nil
       #end
+      puts "Results of query has length #{results.length} and values #{results.inspect}"
       query_result = results.shuffle[0]
       query_result[:category] = category
       return query_result
