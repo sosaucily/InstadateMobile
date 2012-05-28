@@ -21,11 +21,12 @@ class Story
   
   after :create, :generate_story
 
+  TRIES = 5
+
   private
   
     #Create the story based on the inputs from the user.
     def generate_story
-      TRIES = 5
       #Rules engine takes our requirements (which are attributes on this object) and decides who many activities, and of what type, to create
       
       if InstadateMobile::MOCK_API_REQUESTS
