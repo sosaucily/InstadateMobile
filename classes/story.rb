@@ -25,6 +25,7 @@ class Story
   
     #Create the story based on the inputs from the user.
     def generate_story
+      TRIES = 5
       #Rules engine takes our requirements (which are attributes on this object) and decides who many activities, and of what type, to create
       
       if InstadateMobile::MOCK_API_REQUESTS
@@ -51,11 +52,22 @@ class Story
       activity_requests.each do |act|
         case act
         when 'day_eat'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_day_eat_query_options.merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "eat")
+          #Loop TRIES times, or until I get a result.  Can add this to all cases
+          while (count < TRIES)
+            count += 1
+            the_system = ['Yelp'].shuffle.first
+            query_parameters = VenueHelpers.get_day_eat_query_options.merge location_parameters
+            #InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
+            #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
+            act_result = fetch_random_result(the_system, query_parameters, "eat")
+            #No valid hits on this search, so try again, and hopefully get a different third party system to try.
+            if act_result == nil
+              next
+            end
+            #Found a hit, so break out of the loop 
+            activity_results << act_result
+            count = TRIES
+          end
         when 'evening_eat'
           the_system = ['Yelp'].shuffle.first
           query_parameters = VenueHelpers.get_evening_eat_query_options().merge location_parameters
@@ -157,9 +169,9 @@ class Story
       puts "Querying #{the_system} with params #{query_params.inspect}"
       service = Kernel.const_get(the_system).new
       results = service.query(query_params)
-      #if (results.empty?)
-      #  return nil
-      #end
+      if (results.empty?)
+        return nil
+      end
       puts "Results of query has length #{results.length}"
       query_result = results.shuffle[0]
       query_result[:category] = category

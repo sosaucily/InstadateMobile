@@ -62,6 +62,7 @@ class Yelp
       activity_info = { :latitude => business["location"]["coordinate"]["latitude"], :longitude => business["location"]["coordinate"]["longitude"],
                         :rating => business["rating"], :source_category => business["categories"].map{ |cat| cat.first }, :name => business["name"],
                         :source_venue_id => business["id"], :image_url => business["image_url"], :business_url => business["mobile_url"], :phone => business["display_phone"], :address => business["location"]["address"][0], :city => business["location"]["city"] }
+      activity_info[:address] = nil
       next if missing_required_param(activity_info)
       activities << activity_info
     end
@@ -77,7 +78,9 @@ class Yelp
 
   def missing_required_param(test_activity)
     REQUIRED_PARAMETERS.each do |rqmt|
-      return (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
+      if (test_activity[rqmt] == nil || test_activity[rqmt].empty?)
+        return true
+      end
     end
     return false
   end
