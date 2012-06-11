@@ -21,11 +21,11 @@ class InstadateMobile < Sinatra::Base
   end
 
   configure :production do
-      InstadateMobile::MOCK_API_REQUESTS = false
+    InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   configure :development do
-      InstadateMobile::MOCK_API_REQUESTS = false
+    InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   #helpers do
@@ -34,7 +34,7 @@ class InstadateMobile < Sinatra::Base
   #  end
   #end
 
-	# If you want the logs displayed you have to do this before the call to setup
+  # If you want the logs displayed you have to do this before the call to setup
   #DataMapper::Logger.new($stdout, :debug)
 
 
@@ -62,10 +62,10 @@ class InstadateMobile < Sinatra::Base
 
   get "/" do
     #@activity = Activity.new(
-	#  :name      => "My first DataMapper post",
-	#  :created_at => Time.now,
-	#  :updated_at => Time.now
-	#)
+  #  :name      => "My first DataMapper post",
+  #  :created_at => Time.now,
+  #  :updated_at => Time.now
+  #)
     if (On_Mobile)
       send_file File.join(settings.public_folder, 'index.html')
     else
@@ -73,23 +73,21 @@ class InstadateMobile < Sinatra::Base
     end
    
 
-  	#if @activity.save
-  	#else
-  	#	@activity.errors.each do |e|
-  	#		puts e
-  	#	end
-  	#end
+    #if @activity.save
+    #else
+    # @activity.errors.each do |e|
+    #   puts e
+    # end
+    #end
     #logger.info "New Hit on Homepage"
-    
-
   end
 
   post "/story/create" do
-  	#logger.info "params: " + params.inspect
+    #logger.info "params: " + params.inspect
     puts ("request params: " + params.inspect)
     #startts - endts - zip - lat - lon
     if (not params[:story_date] or params[:story_date] == "")
-    	#logger.info "Couldn't find a date parameter, default to today"
+      #logger.info "Couldn't find a date parameter, default to today"
       params[:story_date] = Date.today.strftime('%Y-%m-%d')
     end
 
@@ -111,9 +109,9 @@ class InstadateMobile < Sinatra::Base
       return return_story
     else
       @story.errors.each do |e|
-		    #logger.info e
+        #logger.info e
       end
-	  end
+    end
   end
 
 end
