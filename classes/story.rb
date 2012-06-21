@@ -23,6 +23,17 @@ class Story
 
   TRIES = 5
 
+  def initialize(params)
+    self.zip = params[:zip_search]
+    self.latitude = (params[:lat_search] == "" ? nil : params[:lat_search].to_f)
+    self.longitude = (params[:lng_search] == "" ? nil : params[:lng_search].to_f)
+    self.story_date = Date.parse(params[:story_date])
+    self.daypart = params[:daypart]
+    self.indoor = params[:activity]
+    self.created_at = Time.now
+    self.updated_at = Time.now
+  end
+
   private
   
     #Create the story based on the inputs from the user.

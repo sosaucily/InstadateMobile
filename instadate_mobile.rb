@@ -59,32 +59,18 @@ class InstadateMobile < Sinatra::Base
   end
 
   get "/" do
-    #@activity = Activity.new(
-  #  :name      => "My first DataMapper post",
-  #  :created_at => Time.now,
-  #  :updated_at => Time.now
-  #)
     if (@on_mobile)
       send_file File.join(settings.public_folder, 'index.html')
     else
       erb :index
     end
-   
-
-    #if @activity.save
-    #else
-    # @activity.errors.each do |e|
-    #   puts e
-    # end
-    #end
-    #logger.info "New Hit on Homepage"
   end
 
   post "/story/create" do
     #logger.info "params: " + params.inspect
     puts ("request params: " + params.inspect)
     #startts - endts - zip - lat - lon
-    if (not params[:story_date] or params[:story_date] == "")
+    if (!params[:story_date] || params[:story_date] == "")
       #logger.info "Couldn't find a date parameter, default to today"
       params[:story_date] = Date.today.strftime('%Y-%m-%d')
     end
@@ -94,10 +80,7 @@ class InstadateMobile < Sinatra::Base
       return "invalid location, please try again"
     end
 
-    @story = Story.new(:created_at => Time.now, :updated_at => Time.now, :zip => params[:zip_search], 
-      :latitude => (params[:lat_search] == "" ? nil : params[:lat_search].to_f), 
-      :longitude => (params[:lng_search] == "" ? nil : params[:lng_search].to_f),
-      :story_date => Date.parse(params[:story_date]), :daypart => params[:daypart], :indoor => params[:activity])
+    @story = Story.new(params)
     #logger.info "base story results: " + @story.inspect
     if @story.save
       #logger.info "Story Saved!" + @story.inspect
