@@ -52,12 +52,10 @@ class InstadateMobile < Sinatra::Base
 
   #set :views, settings.root + '/'
   set :public_folder, File.dirname(__FILE__) + '/www'
-
-  On_Mobile = false
   
   before do
     user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    On_Mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) 
+    @on_mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false)
   end
 
   get "/" do
@@ -66,7 +64,7 @@ class InstadateMobile < Sinatra::Base
   #  :created_at => Time.now,
   #  :updated_at => Time.now
   #)
-    if (On_Mobile)
+    if (@on_mobile)
       send_file File.join(settings.public_folder, 'index.html')
     else
       erb :index
