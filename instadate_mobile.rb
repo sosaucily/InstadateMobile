@@ -37,10 +37,6 @@ class InstadateMobile < Sinatra::Base
   # If you want the logs displayed you have to do this before the call to setup
   #DataMapper::Logger.new($stdout, :debug)
 
-
-  # An in-memory Sqlite3 connection:
-  #DataMapper.setup(:default, 'sqlite::memory:')
-
   # A Sqlite3 connection to a persistent database
   DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3:db/instadate.db")
 

@@ -1,21 +1,11 @@
 require 'rubygems'
 require 'bundler'
-if ENV['RACK_ENV'] != 'production'
-  require 'sqlite3'
-end
-require 'data_mapper'
-require 'dm-serializer'
+Bundler.require(:default, :development)
 
 require 'json'
 require 'logger'
 
-require './classes/activity'
-require './classes/story'
-require './classes/venue_helpers'
-require './classes/yelp'
-require './classes/upcoming'
-
-Bundler.require
+Dir[File.join(File.dirname(__FILE__), 'lib', '*.rb')].each {|file| require file }
 
 require './instadate_mobile'
 
