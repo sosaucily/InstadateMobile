@@ -1,14 +1,10 @@
 # encoding: utf-8
 class Upcoming
-
-  API_KEY = "ef81d1a9f2"
-  ENDPOINT = "http://upcoming.yahooapis.com/services/rest/"
-
   def query(params = {})
     Rails.logger.debug "Querying Upcoming API: #{params.inspect}"
     check_parameters(params)
     upcoming_params = build_params(params)
-    response = RestClient.get(ENDPOINT, :params => params)
+    response = RestClient.get(settings["endpoint"], :params => params)
     return build_events(response)
   rescue RestClient::ResourceNotFound => e
     error = e.response
@@ -45,13 +41,13 @@ class Upcoming
     params[:max_date] = Date.parse(params[:date].to_s).strftime("%Y-%m-%d")
     params.delete(:date)
 
-    params.merge!({:api_key => API_KEY, :method => "event.search", :format => "json", :flags => "I"})
+    params.merge!({:api_key => settings["api_key"], :method => "event.search", :format => "json", :flags => "I"})
     return params
   end
 
   def get_categories
     @categories ||= begin
-      response = RestClient.get(ENDPOINT, :params => { :api_key => API_KEY, :method => "category.getList", :format => "json" })
+      response = RestClient.get(settings["endpoint"], :params => { :api_key => settings["api_key"], :method => "category.getList", :format => "json" })
       categories = JSON.parse(response)["rsp"]["category"]
       categories
     end
@@ -83,5 +79,12 @@ class Upcoming
     end
     
     return activities
+  end
+
+  def settings
+    @settings ||= begin
+                    settings_file = File.join(File.dirname(__FILE__), '..', '..', 'settings.yml')
+                    YAML::load(File.open(settings_file))["upcoming"]
+                  end
   end
 end
