@@ -7,6 +7,8 @@ gem 'sqlite3'
 gem 'dm-sqlite-adapter'
 gem 'sinatra-reloader'
 gem 'oauth', '0.4.5'
+gem "rest-client"
+gem "json"
 
 group :test do
   gem 'webmock'

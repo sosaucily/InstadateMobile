@@ -1,6 +1,10 @@
+require 'webmock/rspec'
 require 'bundler'
 Bundler.require(:default, :test)
 Dir[File.join(File.dirname(__FILE__), '..', 'lib', '*.rb')].each {|file| require file }
+Dir[File.join(File.dirname(__FILE__), 'spec_helpers', '*')].each do |spec_helper|
+  require spec_helper
+end
 
 Sinatra::Base.set :environment, :test
 Sinatra::Base.set :run, false

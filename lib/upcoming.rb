@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Upcoming
   def query(params = {})
-    Rails.logger.debug "Querying Upcoming API: #{params.inspect}"
+    #Rails.logger.debug "Querying Upcoming API: #{params.inspect}"
     check_parameters(params)
     upcoming_params = build_params(params)
     response = RestClient.get(settings["endpoint"], :params => params)
@@ -14,7 +14,7 @@ class Upcoming
   private
 
   def check_parameters(params)
-    raise ArgumentError, "Please enter a location or latitude and longitude" if !params.has_key?(:location) && (!params.has_key?(:lat) || !params.has_key?(:long))
+    raise ArgumentError, "Please enter a location or latitude and longitude" if !params.has_key?(:location) && (!params.has_key?(:lat) || !params.has_key?(:lng))
     raise ArgumentError, "Please enter a date" if !params.has_key?(:date)
     return true
   end
@@ -22,10 +22,10 @@ class Upcoming
   def build_params(params)
     categories = get_categories
 
-    if params.has_key?(:lat) && params.has_key?(:long)
-      params[:location] = "#{params[:lat]},#{params[:long]}"
+    if params.has_key?(:lat) && params.has_key?(:lng)
+      params[:location] = "#{params[:lat]},#{params[:lng]}"
       params.delete(:lat)
-      params.delete(:long)
+      params.delete(:lng)
     end
 
     if params.has_key?(:category_filter)
@@ -63,11 +63,11 @@ class Upcoming
                         :source_venue_id => event["id"], :business_url => event["url"] }
       activity_info[:source_category] = categories.detect{ |cat| cat["id"] == event["category_id"].to_i }["name"]
 
-      if !event["start_date"].blank? && event["start_time"] != -1
+      if !event["start_date"].empty? && event["start_time"] != -1
         activity_info[:start_time] = Time.parse("#{event["start_date"]} #{event["start_time"]}")
       end
 
-      if !event["end_date"].blank? && event["end_time"] != -1
+      if !event["end_date"].empty? && event["end_time"] != -1
         activity_info[:end_time] = Time.parse("#{event["end_date"]} #{event["end_time"]}")
       end
 
@@ -83,7 +83,7 @@ class Upcoming
 
   def settings
     @settings ||= begin
-                    settings_file = File.join(File.dirname(__FILE__), '..', '..', 'settings.yml')
+                    settings_file = File.join(File.dirname(__FILE__), '..', 'settings.yml')
                     YAML::load(File.open(settings_file))["upcoming"]
                   end
   end

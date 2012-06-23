@@ -64,6 +64,7 @@ GEM
     fastercsv (1.5.4)
     json (1.6.7)
     json_pure (1.6.7)
+    mime-types (1.19)
     multi_json (1.0.4)
     oauth (0.4.5)
     rack (1.4.1)
@@ -71,6 +72,8 @@ GEM
       rack
     rack-test (0.6.1)
       rack (>= 1.0)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     rspec (2.10.0)
       rspec-core (~> 2.10.0)
       rspec-expectations (~> 2.10.0)
@@ -111,8 +114,10 @@ DEPENDENCIES
   datamapper
   dm-postgres-adapter
   dm-sqlite-adapter
+  json
   oauth (= 0.4.5)
   rack-test
+  rest-client
   rspec
   sinatra
   sinatra-reloader

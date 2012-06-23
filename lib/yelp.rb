@@ -80,7 +80,7 @@ class Yelp
 
   def settings
     @settings ||= begin
-                    settings_file = File.join(File.dirname(__FILE__), '..', '..', 'settings.yml')
+                    settings_file = File.join(File.dirname(__FILE__), '..', 'settings.yml')
                     YAML::load(File.open(settings_file))["yelp"]
                   end
   end
