@@ -1,27 +1,37 @@
 # encoding: utf-8
 class Story
-	include DataMapper::Resource
+  include DataMapper::Resource
 
-	has n, :activities
+  has n, :activities
 
-	property :id,			Serial
-	property :created_at,	DateTime,	:required => true
-	property :updated_at,	DateTime,	:required => true
-	property :start_time,	DateTime
-	property :end_time,		DateTime
-	property :include_meal,	Boolean,	:default  => false
-	property :latitude, 	Float
-	property :longitude, 	Float
-	property :zip,		 	Integer
-	property :city,			String
-	property :story_date,	DateTime
-	property :indoor,		String
-	property :daypart,		String
+  property :id,           Serial
+  property :created_at,   DateTime, :required => true
+  property :updated_at,   DateTime, :required => true
+  property :start_time,   DateTime
+  property :end_time,     DateTime
+  property :include_meal, Boolean,  :default  => false
+  property :latitude,     Float
+  property :longitude,    Float
+  property :zip,          Integer
+  property :city,         String
+  property :story_date,   DateTime
+  property :indoor,       String
+  property :daypart,      String
 
-  
   after :create, :generate_story
 
   TRIES = 5
+
+  def initialize(params)
+    self.zip = params[:zip_search]
+    self.latitude = (params[:lat_search] == "" ? nil : params[:lat_search].to_f)
+    self.longitude = (params[:lng_search] == "" ? nil : params[:lng_search].to_f)
+    self.story_date = Date.parse(params[:story_date])
+    self.daypart = params[:daypart]
+    self.indoor = params[:activity]
+    self.created_at = Time.now
+    self.updated_at = Time.now
+  end
 
   private
   
@@ -34,7 +44,6 @@ class Story
         mock_results
         return
       end
-
 
       #Create a list of activity requests
       activity_requests = get_activity_requests
@@ -135,23 +144,23 @@ class Story
       #InstadateMobile::LOGGER.info("Creating Activities")
       #Create an activity based on the quantity of activities
       activity_results.each do |act_data|
-      	#InstadateMobile::LOGGER.info("Creating activity " + act_data.inspect)
+        #InstadateMobile::LOGGER.info("Creating activity " + act_data.inspect)
         #Also need to make sure the result is part of this request type?
         act_data[:created_at] = Time.now
         act_data[:updated_at] = Time.now
         act_data[:story] = self
         @new_act = Activity.new(act_data)
         if @new_act.save
-        	#InstadateMobile::LOGGER.info("Activity Saved!")
-        	#self.activities << @new_act
+          #InstadateMobile::LOGGER.info("Activity Saved!")
+          #self.activities << @new_act
         else
-        	@new_act.errors.each do |e|
-		 	      puts e
-      		end
-      	end
+          @new_act.errors.each do |e|
+            puts e
+          end
+        end
       end
       #self.save
-	  #InstadateMobile::LOGGER.info("Updated story with activities")
+    #InstadateMobile::LOGGER.info("Updated story with activities")
     end
     
     def get_activity_requests
@@ -181,7 +190,7 @@ class Story
     end
 
     def mock_results
-    	#InstadateMobile::LOGGER.info ("In Mock Results")
+      #InstadateMobile::LOGGER.info ("In Mock Results")
       activity_results = []
 
       food_results = [{:phone => "+1-415-908-3801", :address => "706 Mission St", :city => "Walnut Creek", :latitude=>37.9018083, :longitude=>-122.0632224, :rating=>4.5, :source_category=>["Beer, Wine & Spirits", "Wine Bars"], :image_url=>'http://s3-media2.ak.yelpcdn.com/bphoto/ymEbmXmX-3QxebCa_KK-Tw/60s.jpg', :name=>"Residual Sugar", :source_venue_id=>"XB5zw_qGoR2orqvFh98UHA"},
@@ -213,7 +222,7 @@ class Story
       #InstadateMobile::LOGGER.info ("Creating Activities in mock results")
 
       create_activities(activity_results)
-		#InstadateMobile::LOGGER.info ("Done")
+    #InstadateMobile::LOGGER.info ("Done")
     end
 
 end

@@ -1,0 +1,6 @@
+{
+  "error":{
+    "text":"API unavailable in this location",
+    "id":"UNAVAILABLE_FOR_LOCATION"
+  }
+}

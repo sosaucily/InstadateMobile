@@ -1,0 +1,8 @@
+{
+  "rsp":{
+    "stat":"fail",
+    "error":{
+      "msg":"There was an error"
+    }
+  }
+}
