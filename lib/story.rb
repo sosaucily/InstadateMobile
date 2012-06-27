@@ -23,6 +23,7 @@ class Story
   TRIES = 5
 
   def initialize(params)
+    InstadateMobile::Logger.info "Initializing story: #{params.inspect}"
     self.zip = params[:zip_search]
     self.latitude = (params[:lat_search] == "" ? nil : params[:lat_search].to_f)
     self.longitude = (params[:lng_search] == "" ? nil : params[:lng_search].to_f)
@@ -40,25 +41,23 @@ class Story
       #Rules engine takes our requirements (which are attributes on this object) and decides who many activities, and of what type, to create
       
       if InstadateMobile::MOCK_API_REQUESTS
-        #InstadateMobile::LOGGER.info "MOCK_API_REQUESTS is set to true - Returning mock data."
+        InstadateMobile::Logger.info "MOCK_API_REQUESTS is set to true - Returning mock data."
         mock_results
         return
       end
 
       #Create a list of activity requests
       activity_requests = get_activity_requests
+      InstadateMobile::Logger.info "Activity Requests: #{activity_requests.inspect}"
       activity_results = []
-      #InstadateMobile::LOGGER.info ("activity_requests = " + activity_requests.inspect)
       
       has_timed_event = false
-      #InstadateMobile::LOGGER.info ("\n\n")
       if (zip.nil? or zip == "")
         location_parameters = { :lat => latitude, :long => longitude }
       else
         location_parameters = { :location => zip }
       end
-      
-      puts "Querying for activities in the following categories: " + activity_requests.inspect
+
       activity_requests.each do |act|
         case act
         when 'day_eat'
@@ -126,17 +125,13 @@ class Story
 
       activity_results.flatten!
       
-      #InstadateMobile::LOGGER.info "Activity Results = " + activity_results.inspect
+      InstadateMobile::Logger.info "Activity Results: " + activity_results.inspect
       
       #Coming Soon!
       #build_schedule(activity_results)
       #query upcoming
       
-      #query other systems
-      
-      #From each 
       create_activities(activity_results)
-      
     end
       
     #Create a set of activtiies for this date.
@@ -144,23 +139,19 @@ class Story
       #InstadateMobile::LOGGER.info("Creating Activities")
       #Create an activity based on the quantity of activities
       activity_results.each do |act_data|
-        #InstadateMobile::LOGGER.info("Creating activity " + act_data.inspect)
+        InstadateMobile::Logger.info "Creating activity: #{act_data.inspect}"
         #Also need to make sure the result is part of this request type?
         act_data[:created_at] = Time.now
         act_data[:updated_at] = Time.now
         act_data[:story] = self
         @new_act = Activity.new(act_data)
         if @new_act.save
-          #InstadateMobile::LOGGER.info("Activity Saved!")
+          InstadateMobile::Logger.info "Saving Activity: #{@new_act.inspect}"
           #self.activities << @new_act
         else
-          @new_act.errors.each do |e|
-            puts e
-          end
+          InstadateMobile::Logger.error "Activity Errors: #{@new_act.errors.inspect}"
         end
       end
-      #self.save
-    #InstadateMobile::LOGGER.info("Updated story with activities")
     end
     
     def get_activity_requests
@@ -176,21 +167,20 @@ class Story
     end
 
     def fetch_random_result(the_system, query_params, category)
-      puts "Querying #{the_system} with params #{query_params.inspect}"
+      InstadateMobile::Logger.info "Querying #{the_system} with #{query_params.inspect}"
       service = Kernel.const_get(the_system).new
       results = service.query(query_params)
       if (results.empty?)
         return nil
       end
-      puts "Results of query has length #{results.length}"
+      InstadateMobile::Logger.info "Number of results from query: #{results.length}"
       query_result = results.shuffle[0]
       query_result[:category] = category
-      puts "Returning result #{query_result}"
+      InstadateMobile::Logger.info "Returning result #{query_result}"
       return query_result
     end
 
     def mock_results
-      #InstadateMobile::LOGGER.info ("In Mock Results")
       activity_results = []
 
       food_results = [{:phone => "+1-415-908-3801", :address => "706 Mission St", :city => "Walnut Creek", :latitude=>37.9018083, :longitude=>-122.0632224, :rating=>4.5, :source_category=>["Beer, Wine & Spirits", "Wine Bars"], :image_url=>'http://s3-media2.ak.yelpcdn.com/bphoto/ymEbmXmX-3QxebCa_KK-Tw/60s.jpg', :name=>"Residual Sugar", :source_venue_id=>"XB5zw_qGoR2orqvFh98UHA"},
@@ -222,7 +212,5 @@ class Story
       #InstadateMobile::LOGGER.info ("Creating Activities in mock results")
 
       create_activities(activity_results)
-    #InstadateMobile::LOGGER.info ("Done")
     end
-
 end
