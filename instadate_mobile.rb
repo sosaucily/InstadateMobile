@@ -13,18 +13,15 @@ class InstadateMobile < Sinatra::Base
     #set :raise_errors, true
   end
 
-  error do
-    e = request.env['sinatra.error']
-    puts e.to_s
-    puts e.backtrace.join("\n")
-    "Application Error!"
-  end
-
-  configure :production do
+  configure :development do
     InstadateMobile::MOCK_API_REQUESTS = false
   end
 
-  configure :development do
+  configure :test do
+    InstadateMobile::MOCK_API_REQUESTS = true
+  end
+
+  configure :production do
     InstadateMobile::MOCK_API_REQUESTS = false
   end
 
@@ -50,8 +47,8 @@ class InstadateMobile < Sinatra::Base
   set :public_folder, File.dirname(__FILE__) + '/www'
   
   before do
-    user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    @on_mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false)
+    user_agent = request.env['HTTP_USER_AGENT']
+    @on_mobile = (user_agent.downcase =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) unless user_agent.nil?
   end
 
   get "/" do
@@ -64,7 +61,6 @@ class InstadateMobile < Sinatra::Base
 
   post "/story/create" do
     #logger.info "params: " + params.inspect
-    puts ("request params: " + params.inspect)
     #startts - endts - zip - lat - lon
     if (!params[:story_date] || params[:story_date] == "")
       #logger.info "Couldn't find a date parameter, default to today"
@@ -73,21 +69,20 @@ class InstadateMobile < Sinatra::Base
 
     #logger.info "Creating Story!"
     if (params[:zip_search].nil? or params[:zip_search] == "")
-      return "invalid location, please try again"
+      error = { "error" => { "message" => "Invalid location. Please try again." } }
+      return [404, error.to_json]
     end
 
     @story = Story.new(params)
     #logger.info "base story results: " + @story.inspect
     if @story.save
       #logger.info "Story Saved!" + @story.inspect
-      puts "Story has " + @story.activities.count.to_s + " activities"
-      return_story = @story.to_json(:methods => [:activities])
+      #puts "Story has " + @story.activities.count.to_s + " activities"
       #logger.info "Returning " + return_story.to_s
-      return return_story
+      return @story.to_json(:methods => [:activities])
     else
-      @story.errors.each do |e|
-        #logger.info e
-      end
+      error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
+      return [404, error.to_json]
     end
   end
 
