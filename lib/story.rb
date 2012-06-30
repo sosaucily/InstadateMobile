@@ -61,7 +61,8 @@ class Story
       activity_requests.each do |act|
         case act
         when 'day_eat'
-          #Loop TRIES times, or until I get a result.  Can add this to all cases
+          count = 0
+          # Loop TRIES times, or until I get a result.  Can add this to all cases
           while (count < TRIES)
             count += 1
             the_system = ['Yelp'].shuffle.first
@@ -69,13 +70,11 @@ class Story
             #InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
             #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
             act_result = fetch_random_result(the_system, query_parameters, "eat")
-            #No valid hits on this search, so try again, and hopefully get a different third party system to try.
-            if act_result == nil
-              next
-            end
-            #Found a hit, so break out of the loop 
+            # No valid hits on this search, so try again, and hopefully get a different third party system to try.
+            next if act_result == nil
+            # Found a hit, so break out of the loop 
             activity_results << act_result
-            count = TRIES
+            break
           end
         when 'evening_eat'
           the_system = ['Yelp'].shuffle.first
