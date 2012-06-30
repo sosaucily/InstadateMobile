@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Upcoming
-
-  API_KEY = "ef81d1a9f2"
+  API_KEY = ENV['UPCOMING_API_KEY']
   ENDPOINT = "http://upcoming.yahooapis.com/services/rest/"
 
   def query(params = {})
