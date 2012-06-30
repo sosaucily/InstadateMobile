@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instadate</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+	  <meta name="apple-mobile-web-app-capable" content="yes">
+	  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <link href="../stylesheets/jquery.mobile-1.1.0.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/jquery.mobile.actionsheet.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/main.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/woody.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/woody.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/woody_mods.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="../stylesheets/story.css" media="all" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Terminal+Dosis:400,700' rel='stylesheet' type='text/css' />
+
+    <script src="../javascripts/jquery.js" type="text/javascript"></script>
+    <script src="../javascripts/klass.min.js" type="text/javascript"></script>
+    <script src="../javascripts/jquery_mobile.js" type="text/javascript"></script>
+    <script src="../javascripts/story.js" type="text/javascript"></script>
+    <script src="../javascripts/mustache.js" type="text/javascript"></script>
+    <script src="../javascripts/ICanHaz.min.js" type="text/javascript"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCloHHOTgUAwKqVVpovHVzGioPQ8RkQeTY&sensor=false" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <div data-role="page" id="story" data-title="Story">
+      <!-- Header -->
+      <div data-role="header" class="header story-header">
+        <h4>InstaDate</h4>
+        <a href="index.html" data-icon="check" class="ui-btn-right">Get App</a>
+      </div>
+      <!-- END OF: Header -->
+
+        <div id="story_list" class="story_list">
+
+          <% @story.activities.each_with_index do |activity, idx| %>
+            <div id="chapter_<%= idx + 1 %>" class="activity activity-<%= activity.category %>-evening">
+              <div class="chapter ui-corner-all">
+                <div class="chapter_div">
+                  <div id="chapter_<%= idx + 1 %>_img" class="chapter_business_img">
+                    <img id="business_image_url" src="<%= activity.image_url %>" alt="pic"></img>
+                  </div>
+                  <div id="chapter_<%= idx + 1 %>" class="chapter_business_text">
+                    <div class="chapter-header">
+                      <strong>Chapter <%= idx + 1 %>: <%= activity.category %></strong>
+                    </div>
+                    <div class="chapter-details">
+                      <strong><%= activity.name %></strong>
+                      <br />
+                      <%= activity.source_category.first.size > 20 ? activity.source_category.first[0...17] + "..." : activity.source_category.first %>
+                    </div>
+                  </div>
+                  <div class="chapter_arrow">
+                    <img class="chapter_arrow_img" id="chapter_<%= idx + 1 %>_arrow" src="../images/right-arrow.png"></img>
+                  </div>
+               </div>
+              </div>
+            </div>
+
+            <div id="chapter_<%= idx + 1 %>_details" style="display:none;margin: 10px 10px 10px 10px">
+              <!-- Map -->
+              <div class="map_container" style="margin-bottom: 10px;">
+                <div class="the_map" id="themap<%= idx + 1 %>"></div>
+              </div>
+              <!--END OF: Map -->
+              <!-- Address and Phone -->
+              <ul data-role="listview" data-theme="a" data-mini="true" data-inset="true">
+                <li>
+                  <img src="../images/pin.png" alt="Location" class="ui-li-icon" />
+                  <span id="chapter_<%= idx + 1 %>_addr">
+                    <a class="addr_link" href="http://maps.google.com/maps?q=<%= activity.latitude %>,<%= activity.longitude %>" target="_blank">
+                      <%= activity.address %>, <%= activity.city %>
+                    </a>
+                  </span>
+                </li>
+                <li>
+                  <img src="../images/phone.png" alt="Phone" class="ui-li-icon" />
+                    <span id="chapter_<%= idx + 1 %>_phone">
+                    </span>
+                  </li>
+                <li>
+                <img src="../images/info.png" alt="Yelp" class="ui-li-icon" />
+                  <span id="chapter_<%= idx + 1 %>_api">
+                    <a class="api_link" href="<%= activity.business_url %>" target="_blank">More details</a>
+                  </span>
+                  <div style="margin:0 0 0 10px;display:inline-block;">
+                    <a href="<%= activity.business_url %>" target="_blank">
+                      <img id="yelp_image" src="../images/yelp_logo_100x50-2x.png" style="margin:-6px 0 -8px 0px;" />
+                    </a>
+                  </div>
+                </li>
+              </ul>
+              <!-- END OF: Address and Phone -->
+            </div>
+
+          <% end %>
+
+        </div>
+    </div><!-- END OF: Story -->
+  </body>
+</html>

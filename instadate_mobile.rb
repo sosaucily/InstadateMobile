@@ -66,4 +66,10 @@ class InstadateMobile < Sinatra::Base
       return [404, error.to_json]
     end
   end
+
+  get "/stories/:id" do
+    @story = Story.get(params[:id])
+    redirect to("/") if @story.nil?
+    erb :permalink
+  end
 end
