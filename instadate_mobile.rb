@@ -28,7 +28,7 @@ class InstadateMobile < Sinatra::Base
   #Drop and create all the ORM tables
   DataMapper.auto_migrate!
 
-  Datamapper.finalize
+  DataMapper.finalize
 
   set :public_folder, File.dirname(__FILE__) + '/www'
   
