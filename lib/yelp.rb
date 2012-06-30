@@ -3,16 +3,16 @@ class Yelp
   REQUIRED_PARAMETERS = [:image_url,:address,:city]
 
   def query(params = {})
-    #InstadateMobile::LOGGER.debug "Querying Yelp API: #{params.inspect}"
+    InstadateMobile::Logger.info "Querying Yelp API"
     check_parameters(params)
     yelp_params = build_params(params)
+    InstadateMobile::Logger.debug "Yelp Parameters: #{yelp_params.inspect}"
     
     consumer = OAuth::Consumer.new(settings["consumer_key"], settings["consumer_secret"], { :site => settings["endpoint"] })
     access_token = OAuth::AccessToken.new(consumer, settings["access_token"], settings["access_secret"])
-    #response = access_token.get("/v2/search?#{yelp_params.to_query}")
     yelp_params_as_query = URI.escape(yelp_params.collect{|k,v| "#{k}=#{v}"}.join('&'))
     response = access_token.get("/v2/search?#{yelp_params_as_query}")
-    #InstadateMobile::LOGGER.debug "YELP Response: #{response.body}"
+    InstadateMobile::Logger.debug "Yelp Response: #{response.body}"
 
     return build_activities(response)
   end
@@ -60,8 +60,8 @@ class Yelp
       activities << activity_info
     end
 
-    if (activities.empty?) then
-      puts "Unable to return any yelp activities " + response.inspect
+    if activities.empty?
+      InstadateMobile::Logger.error "Unable to return any Yelp activities: #{response.inspect}"
     end
 
     return activities

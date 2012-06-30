@@ -1,38 +1,23 @@
 class InstadateMobile < Sinatra::Base
-
   InstadateMobile::root = File.dirname(__FILE__)
-  
+
+  configure do
+    InstadateMobile::Logger = Logger.new("log/#{ENV['RACK_ENV']}.log")
+  end
+
   configure :development do
     register Sinatra::Reloader
+    InstadateMobile::MOCK_API_REQUESTS = false
   end
 
-  configure :production, :development do
-    #LOGGER = Logger.new("sinatra.log")
-    #InstadateMobile::LOGGER = LOGGER
-    #enable :logging, :dump_errors
-    #set :raise_errors, true
-  end
+  configure :test do
+    InstadateMobile::MOCK_API_REQUESTS = true
 
-  error do
-    e = request.env['sinatra.error']
-    puts e.to_s
-    puts e.backtrace.join("\n")
-    "Application Error!"
   end
 
   configure :production do
     InstadateMobile::MOCK_API_REQUESTS = false
   end
-
-  configure :development do
-    InstadateMobile::MOCK_API_REQUESTS = false
-  end
-
-  #helpers do
-  #  def InstadateMobile::logger
-  #    LOGGER
-  #  end
-  #end
 
   # If you want the logs displayed you have to do this before the call to setup
   #DataMapper::Logger.new($stdout, :debug)
@@ -43,15 +28,11 @@ class InstadateMobile < Sinatra::Base
   #Drop and create all the ORM tables
   DataMapper.auto_migrate!
 
-  #Create or Update ORM tables if needed
-  #DataMapper.auto_upgrade!
-
-  #set :views, settings.root + '/'
   set :public_folder, File.dirname(__FILE__) + '/www'
   
   before do
-    user_agent =  request.env['HTTP_USER_AGENT'].downcase
-    @on_mobile = (user_agent =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false)
+    user_agent = request.env['HTTP_USER_AGENT']
+    @on_mobile = (user_agent.downcase =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) unless user_agent.nil?
   end
 
   get "/" do
@@ -63,32 +44,24 @@ class InstadateMobile < Sinatra::Base
   end
 
   post "/story/create" do
-    #logger.info "params: " + params.inspect
-    puts ("request params: " + params.inspect)
-    #startts - endts - zip - lat - lon
+    InstadateMobile::Logger.info "POST /story/create - params: #{params.inspect}"
     if (!params[:story_date] || params[:story_date] == "")
-      #logger.info "Couldn't find a date parameter, default to today"
       params[:story_date] = Date.today.strftime('%Y-%m-%d')
     end
 
-    #logger.info "Creating Story!"
     if (params[:zip_search].nil? or params[:zip_search] == "")
-      return "invalid location, please try again"
+      error = { "error" => { "message" => "Invalid location. Please try again." } }
+      return [404, error.to_json]
     end
 
     @story = Story.new(params)
-    #logger.info "base story results: " + @story.inspect
     if @story.save
-      #logger.info "Story Saved!" + @story.inspect
-      puts "Story has " + @story.activities.count.to_s + " activities"
-      return_story = @story.to_json(:methods => [:activities])
-      #logger.info "Returning " + return_story.to_s
-      return return_story
+      InstadateMobile::Logger.info "Story saved! #{@story.inspect}"
+      return @story.to_json(:methods => [:activities])
     else
-      @story.errors.each do |e|
-        #logger.info e
-      end
+      InstadateMobile::Logger.error "Story not saved: #{@story.inspect}"
+      error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
+      return [404, error.to_json]
     end
   end
-
 end

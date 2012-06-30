@@ -14,6 +14,7 @@ group :test do
   gem 'webmock'
   gem 'rack-test'
   gem 'rspec'
+  gem 'timecop'
 end
 
 group :production do

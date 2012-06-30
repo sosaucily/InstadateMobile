@@ -1,12 +1,14 @@
 # encoding: utf-8
 class Upcoming
   def query(params = {})
-    #Rails.logger.debug "Querying Upcoming API: #{params.inspect}"
+    InstadateMobile::Logger.info "Querying Upcoming API"
     check_parameters(params)
     upcoming_params = build_params(params)
+    InstadateMobile::Logger.debug "Upcoming parameters: #{params.inspect}"
     response = RestClient.get(settings["endpoint"], :params => params)
     return build_events(response)
   rescue RestClient::ResourceNotFound => e
+    InstadateMobile::Logger.error "Upcoming API error: #{e.response}"
     error = e.response
     raise JSON.parse(error)["rsp"]["error"]["msg"]
   end

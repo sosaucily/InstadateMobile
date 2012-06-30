@@ -1,3 +1,4 @@
+ENV['RACK_ENV'] = 'test'
 require 'webmock/rspec'
 require 'bundler'
 Bundler.require(:default, :test)
@@ -11,6 +12,7 @@ Sinatra::Base.set :run, false
 Sinatra::Base.set :raise_errors, true
 Sinatra::Base.set :logging, false
 
+require 'logger'
 require File.join(File.dirname(__FILE__), '..', 'instadate_mobile.rb')
 
 DataMapper.setup(:default, "sqlite3::memory:")
