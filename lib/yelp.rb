@@ -1,5 +1,11 @@
 # encoding: utf-8
 class Yelp
+  OAUTH_CONSUMER_KEY = "xmQv-J8g98h40EjnUFkmIQ"
+  OAUTH_CONSUMER_SECRET = "d0ZDmkuCGKWSSiS5-Fy99X7nn2c"
+  OAUTH_ACCESS_TOKEN = "QzuSzvPavIuzkg2NqYfKSb3RMROfFDU9"
+  OAUTH_ACCESS_SECRET = "h1QIIth-Qs2VCNGKlqpLjxKRqgU"
+  ENDPOINT = "http://api.yelp.com/"
+  RATING_THRESHOLD = 3.5
   REQUIRED_PARAMETERS = [:image_url,:address,:city]
 
   def query(params = {})
@@ -8,8 +14,8 @@ class Yelp
     yelp_params = build_params(params)
     InstadateMobile::Logger.debug "Yelp Parameters: #{yelp_params.inspect}"
     
-    consumer = OAuth::Consumer.new(settings["consumer_key"], settings["consumer_secret"], { :site => settings["endpoint"] })
-    access_token = OAuth::AccessToken.new(consumer, settings["access_token"], settings["access_secret"])
+    consumer = OAuth::Consumer.new(OAUTH_CONSUMER_KEY, OAUTH_CONSUMER_SECRET, { :site => ENDPOINT })
+    access_token = OAuth::AccessToken.new(consumer, OAUTH_ACCESS_TOKEN, OAUTH_ACCESS_SECRET)
     yelp_params_as_query = URI.escape(yelp_params.collect{|k,v| "#{k}=#{v}"}.join('&'))
     response = access_token.get("/v2/search?#{yelp_params_as_query}")
     InstadateMobile::Logger.debug "Yelp Response: #{response.body}"
@@ -52,7 +58,7 @@ class Yelp
     activities = []
     businesses = JSON.parse(response.body)["businesses"]
     businesses.each do |business|
-      next if business["rating"] < settings["ratings_threshold"]
+      next if business["rating"] < RATING_THRESHOLD
       activity_info = { :latitude => business["location"]["coordinate"]["latitude"], :longitude => business["location"]["coordinate"]["longitude"],
                         :rating => business["rating"], :source_category => business["categories"].map{ |cat| cat.first }, :name => business["name"],
                         :source_venue_id => business["id"], :image_url => business["image_url"], :business_url => business["mobile_url"], :phone => business["display_phone"], :address => business["location"]["address"][0], :city => business["location"]["city"] }
@@ -76,12 +82,5 @@ class Yelp
       end
     end
     return false
-  end
-
-  def settings
-    @settings ||= begin
-                    settings_file = File.join(File.dirname(__FILE__), '..', 'settings.yml')
-                    YAML::load(File.open(settings_file))["yelp"]
-                  end
   end
 end
