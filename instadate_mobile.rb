@@ -7,7 +7,7 @@ class InstadateMobile < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    InstadateMobile::MOCK_API_REQUESTS = false
+    InstadateMobile::MOCK_API_REQUESTS = true
   end
 
   configure :test do
@@ -59,7 +59,8 @@ class InstadateMobile < Sinatra::Base
     @story = Story.new(params)
     if @story.save
       InstadateMobile::Logger.info "Story saved! #{@story.inspect}"
-      return @story.to_json(:methods => [:activities])
+      @results = @story.to_json(:methods => [:activities])
+      return JSON.parse(@results).merge({story_id:@story.id}).to_json
     else
       InstadateMobile::Logger.error "Story not saved: #{@story.inspect}"
       error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
