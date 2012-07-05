@@ -10,6 +10,8 @@ gem 'oauth', '0.4.5'
 gem "rest-client"
 gem "json"
 
+gem 'rake'
+
 group :test do
   gem 'webmock'
   gem 'rack-test'

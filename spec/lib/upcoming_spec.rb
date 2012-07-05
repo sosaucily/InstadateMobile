@@ -24,7 +24,7 @@ describe Upcoming do
   end
 
   before(:all) do
-    @settings = load_settings("upcoming")
+    @settings = load_settings()[:upcoming]
   end
 
   describe ".query" do

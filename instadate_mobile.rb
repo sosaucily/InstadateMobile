@@ -7,7 +7,7 @@ class InstadateMobile < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    InstadateMobile::MOCK_API_REQUESTS = true
+    InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   configure :test do

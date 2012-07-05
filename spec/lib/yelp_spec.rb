@@ -4,10 +4,7 @@ describe Yelp do
   let(:yelp) { Yelp.new }
 
   def settings
-    @settings ||= begin
-                    settings_file = File.join(File.dirname(__FILE__), '..', '..', 'settings.yml.example')
-                    YAML::load(File.open(settings_file))["yelp"]
-                  end
+    @settings = load_settings()[:yelp]
   end
 
   describe ".query" do
