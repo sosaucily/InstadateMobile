@@ -12,7 +12,7 @@ class Activity
   property :duration,         Integer
   property :rating,           Float
   property :source_category,  Json
-  property :name,             String
+  property :name,             String,     :length => 200
   property :start_time,       DateTime
   property :end_time,         DateTime
   property :source_venue_id,  String,     :length => 200
@@ -21,4 +21,5 @@ class Activity
   property :phone,            String
   property :address,          String
   property :city,             String
+  property :system,           String
 end

@@ -77,7 +77,7 @@ module VenueHelpers
   end
 
   def VenueHelpers.get_night_do_query_options (p_indoor=false)
-    category = Array.new VenueHelpers::NIGHT_DO #this is grabbing the THING!!!!
+    category = Array.new VenueHelpers::NIGHT_DO
     if (p_indoor == 'indoor')
       category.select! { |elem| 
         VenueHelpers::INDOOR.include? elem

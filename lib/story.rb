@@ -89,8 +89,16 @@ class Story
           #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(the_system, query_parameters, "do")
         when 'day_see'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_day_see_query_options(indoor).merge location_parameters
+          options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
+          the_system = options.shuffle.first
+          query_parameters = {}
+          if the_system == 'Upcoming'
+            has_timed_event = true
+            query_parameters[:date] = story_date
+          elsif the_system == 'Yelp'
+            query_parameters = VenueHelpers.get_evening_see_query_options(indoor)
+          end
+          query_parameters.merge! location_parameters
           #InstadateMobile::LOGGER.info 'schedule = day_see, indoor = ' + indoor
           #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(the_system, query_parameters, "see")
@@ -101,13 +109,17 @@ class Story
           #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(the_system, query_parameters, "do")
         when 'evening_see'
-          #options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
-          the_system = ['Yelp'].shuffle.first #Only Yelp for now
-          query_parameters = VenueHelpers.get_evening_see_query_options(indoor).merge location_parameters
+          options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
+          query_parameters = {}
+          the_system = options.shuffle.first
+          #the_system = "Upcoming"
           if the_system == 'Upcoming'
             has_timed_event = true
             query_parameters[:date] = story_date
+          elsif the_system == 'Yelp'
+            query_parameters = VenueHelpers.get_evening_see_query_options(indoor)
           end
+          query_parameters.merge! location_parameters
           #InstadateMobile::LOGGER.info 'schedule = evening_see, indoor = ' + indoor
           #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
           activity_results << fetch_random_result(the_system, query_parameters, "see")
@@ -160,7 +172,7 @@ class Story
         #activity_requests = ['evening_see']
       when "evening"
         activity_requests = [['evening_see','evening_eat','night_do'],['evening_do','evening_eat','night_do']].shuffle[0]
-        #activity_requests = ['evening_see']
+        #activity_requests = ['evening_see','evening_see','evening_see']
       end
       activity_requests
     end

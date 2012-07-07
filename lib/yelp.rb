@@ -18,7 +18,7 @@ class Yelp
     access_token = OAuth::AccessToken.new(consumer, OAUTH_ACCESS_TOKEN, OAUTH_ACCESS_SECRET)
     yelp_params_as_query = URI.escape(yelp_params.collect{|k,v| "#{k}=#{v}"}.join('&'))
     response = access_token.get("/v2/search?#{yelp_params_as_query}")
-    InstadateMobile::Logger.debug "Yelp Response: #{response.body}"
+    #InstadateMobile::Logger.debug "Yelp Response: #{response.body}"
 
     return build_activities(response)
   end
@@ -61,7 +61,7 @@ class Yelp
       next if business["rating"] < RATING_THRESHOLD
       activity_info = { :latitude => business["location"]["coordinate"]["latitude"], :longitude => business["location"]["coordinate"]["longitude"],
                         :rating => business["rating"], :source_category => business["categories"].map{ |cat| cat.first }, :name => business["name"],
-                        :source_venue_id => business["id"], :image_url => business["image_url"], :business_url => business["mobile_url"], :phone => business["display_phone"], :address => business["location"]["address"][0], :city => business["location"]["city"] }
+                        :source_venue_id => business["id"], :image_url => business["image_url"], :business_url => business["mobile_url"], :phone => business["display_phone"], :address => business["location"]["address"][0], :city => business["location"]["city"], :system => "yelp" }
       next if missing_required_param(activity_info)
       activities << activity_info
     end
