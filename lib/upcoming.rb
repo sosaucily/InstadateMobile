@@ -53,7 +53,7 @@ class Upcoming
     
     #params[:variety] = 1 #This would be cool, but doesn't seem to work.. It always returns only 1 hit, and it's always the same hit!
     
-    params[:per_page] = 5 #Upcoming doesn't randomize it's results, so we have to do it.
+    params[:per_page] = 100 #Upcoming doesn't randomize it's results, so we have to do it.
 
     params.merge!({:api_key => API_KEY, :method => "event.search", :format => "json", :flags => "I"})
     return params
