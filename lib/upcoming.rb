@@ -74,7 +74,7 @@ class Upcoming
 
     events.each do |event|
       business_url_key = ["url","venue_url","ticket_url"].detect {|attr| !event[attr].nil? and event[attr] != ""}
-      InstadateMobile::Logger.debug "Using url key: " + business_url_key
+      InstadateMobile::Logger.debug "Using url key: " + business_url_key if !business_url_key.nil?
       
       
       activity_info = { :latitude => event["latitude"], :longitude => event["longitude"], :name => event["name"],

@@ -171,7 +171,7 @@ class Story
         activity_requests = [['day_do','day_eat','day_see'],['day_see','day_eat','day_do']].shuffle[0]
         #activity_requests = ['evening_see']
       when "evening"
-        activity_requests = [['evening_see','evening_eat','night_do'],['evening_do','evening_eat','night_do']].shuffle[0]
+        activity_requests = ['evening_see','evening_eat','night_do']
         #activity_requests = ['evening_see','evening_see','evening_see']
       end
       activity_requests
