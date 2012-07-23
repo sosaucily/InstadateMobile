@@ -1,105 +1,178 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Instadate</title>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
-	  <meta name="apple-mobile-web-app-capable" content="yes">
-	  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <head>
 
-    <link href="../stylesheets/jquery.mobile-1.1.0.min.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/jquery.mobile.actionsheet.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/main.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/woody.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/woody.min.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/woody_mods.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="../stylesheets/story.css" media="all" rel="stylesheet" type="text/css" />
-    <link href='http://fonts.googleapis.com/css?family=Terminal+Dosis:400,700' rel='stylesheet' type='text/css' />
+        <title>Oyster - Activity ideas, instantly!</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        
+        <!-- Style Sheets -->
+        <link rel="stylesheet" href="stylesheets/desktop/reset.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="stylesheets/desktop/style.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="stylesheets/desktop/permalink-style.css" type="text/css" media="screen, projection" />
 
-    <script src="../javascripts/jquery.js" type="text/javascript"></script>
-    <script src="../javascripts/klass.min.js" type="text/javascript"></script>
-    <script src="../javascripts/jquery_mobile.js" type="text/javascript"></script>
-    <script src="../javascripts/story.js" type="text/javascript"></script>
-    <script src="../javascripts/mustache.js" type="text/javascript"></script>
-    <script src="../javascripts/ICanHaz.min.js" type="text/javascript"></script>
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCloHHOTgUAwKqVVpovHVzGioPQ8RkQeTY&sensor=false" type="text/javascript"></script>
-  </head>
+        
+        <!-- Include Scripts -->    
+        <script type="text/javascript" src="javascripts/jquery.min.js"></script>
+        <script type="text/javascript" src="javascripts/desktop/jquery.backgroundPosition.js"></script>
+        <script type="text/javascript" src="javascripts/desktop/jquery.equalize.js"></script>
+        <script type="text/javascript" src="javascripts/desktop/jquery.cycle.lite.min.js"></script>
+        <script type="text/javascript" src="javascripts/desktop/jquery.pngFix.pack.js"></script>
+        <script type="text/javascript" src="javascripts/desktop/custom.js"></script> 
+    
+    </head>
 
-  <body>
-    <div data-role="page" id="story" data-title="Story">
-      <!-- Header -->
-      <div data-role="header" class="header story-header">
-        <h4>InstaDate</h4>
-        <a href="index.html" data-icon="check" class="ui-btn-right">Get App</a>
-      </div>
-      <!-- END OF: Header -->
+<body>
 
-        <div id="story_list" class="story_list">
+<!-- Start Main Container -->
+<div id="container">
 
-          <% @story.activities.each_with_index do |activity, idx| %>
-            <div id="chapter_<%= idx + 1 %>" class="activity activity-<%= activity.category %>-evening">
-              <div class="chapter ui-corner-all">
-                <div class="chapter_div">
-                  <div id="chapter_<%= idx + 1 %>_img" class="chapter_business_img">
-                    <img id="business_image_url" src="<%= activity.image_url %>" alt="pic"></img>
-                  </div>
-                  <div id="chapter_<%= idx + 1 %>" class="chapter_business_text">
-                    <div class="chapter-header">
-                      <strong>Chapter <%= idx + 1 %>: <%= activity.category %></strong>
-                    </div>
-                    <div class="chapter-details">
-                      <strong><%= activity.name %></strong>
-                      <br />
-                      <%= activity.source_category.first.size > 20 ? activity.source_category.first[0...17] + "..." : activity.source_category.first %>
-                    </div>
-                  </div>
-                  <div class="chapter_arrow">
-                    <img class="chapter_arrow_img" id="chapter_<%= idx + 1 %>_arrow" src="../images/right-arrow.png"></img>
-                  </div>
-               </div>
-              </div>
-            </div>
 
-            <div id="chapter_<%= idx + 1 %>_details" style="display:none;margin: 10px 10px 10px 10px">
-              <!-- Map -->
-              <div class="map_container" style="margin-bottom: 10px;">
-                <div class="the_map" id="themap<%= idx + 1 %>"></div>
-              </div>
-              <!--END OF: Map -->
-              <!-- Address and Phone -->
-              <ul data-role="listview" data-theme="a" data-mini="true" data-inset="true">
-                <li>
-                  <img src="../images/pin.png" alt="Location" class="ui-li-icon" />
-                  <span id="chapter_<%= idx + 1 %>_addr">
-                    <a class="addr_link" href="http://maps.google.com/maps?q=<%= activity.latitude %>,<%= activity.longitude %>" target="_blank">
-                      <%= activity.address %>, <%= activity.city %>
-                    </a>
-                  </span>
-                </li>
-                <li>
-                  <img src="../images/phone.png" alt="Phone" class="ui-li-icon" />
-                    <span id="chapter_<%= idx + 1 %>_phone">
-                    </span>
-                  </li>
-                <li>
-                <img src="../images/info.png" alt="Yelp" class="ui-li-icon" />
-                  <span id="chapter_<%= idx + 1 %>_api">
-                    <a class="api_link" href="<%= activity.business_url %>" target="_blank">More details</a>
-                  </span>
-                  <div style="margin:0 0 0 10px;display:inline-block;">
-                    <a href="<%= activity.business_url %>" target="_blank">
-                      <img id="yelp_image" src="../images/yelp_logo_100x50-2x.png" style="margin:-6px 0 -8px 0px;" />
-                    </a>
-                  </div>
-                </li>
-              </ul>
-              <!-- END OF: Address and Phone -->
-            </div>
-
-          <% end %>
-
+    <!-- Start Header -->
+    <div id="header">
+    
+        <div id="header-main">
+        
+            <!-- Start Header Wrapper -->
+            <div class="wrapper">
+            
+                <h1 class="logo">AppShow Logo</h1>
+                <table><tr><td>
+                <div class="intro">
+                
+                    <p> <span style="color:#ffffff;">Oyster makes planning</br>activities fast, easy, and fun.</br>Get it now!</span></p>
+                    
+                    <p class="app-store"><a class="replace" href="http://itunes.apple.com/us/app/tweetdeck/id429654148?mt=8&ls=1" target="_blank" title="Buy App Name">Available on the iPhone App Store</a></p>
+        
+        </td></tr></table>
+        
+        
+                </div>
+                
+            </div><!-- End Header Wrapper -->
+            
         </div>
-    </div><!-- END OF: Story -->
-  </body>
+        
+    </div><!-- End Header -->
+    
+    
+    <!-- Start Main Container -->
+    <div id="mainContent">
+    
+        <!-- Start Main Content Wrapper -->
+        <div class="wrapper">
+        
+            <!-- Start Content Wrapper -->
+            <div id="content">
+                
+                <ul id="tabs">
+                    <li data-panel="features_panel" class="current">Features</li>
+            <li data-panel="about_panel" >About</li>
+                    <br class="clear" />
+                </ul>
+    
+                
+        
+                <!-- Start Features Panel -->
+                <div id="features_panel" class="panel">
+                
+                    <ul class="features">
+                    
+                        <li>
+                            <h2 class="clock">Instantly Plan</h2>
+                            <p>Never get stuck without ideas of what to do on a date. Oyster does the hard work for you by picking awesome nearby to go.</p>
+                        </li>
+                        
+                        <li>
+                            <h2 class="plus">Share with Friends</h2>
+                            <p>Once you've discovered the perfect activity, share it with your friends on Facebook, Twitter, or email!</p>
+                        </li>
+                        
+                       
+                        
+                    </ul>
+                    
+                </div><!-- End Features Panel -->
+             
+            <!-- Start About Panel -->
+                <div id="about_panel" class="panel hide">
+                
+                    <ul class="about">
+                    
+                        <li>
+                            <h2 class="speechmedia">The Story of Oyster</h2>
+                            <p>Oyster was created one day after waking up with no plans. The world is our oyster so we made an app to help discover more.</p>
+                <br>
+                <p>Have something to share with us? Contact us at <a target='_blank' href="mailto:team@theoyster.me?subject=Oyster%20Feedback">team@theoyster.me</a>!</p>
+                        </li>
+                        
+                    </ul>
+                    
+                </div><!-- End About Panel -->      
+        
+                
+
+            
+                
+                
+                
+                <!-- Start Footer -->
+                <div id="footer">
+                
+                    <!-- Right Footer -->
+		    
+                    <div id="footer-right">
+                    
+                        <!--
+			<div id="footer-subscribe">
+                        
+                            <form method="post" action="">
+                                <input id="email" type="text" onfocus="if (this.value == 'enter your email to subscribe!') {this.value = '';}" onblur="if (this.value == '') {this.value = 'enter your email to subscribe!';}" value="enter your email to subscribe!">
+                                <input type="submit" value="submit" id="email-submit">
+                            </form>
+                        
+                        </div>
+		
+			-->
+			
+                        
+                        <div id="social-icons">
+			    
+			    <h2>Follow Us</h2>
+                            <a target='_blank' title="Facebook" href="https://www.facebook.com/oysterme"><img src="images/desktop/social-icons/facebook.png" border="0" /></a>
+                            <a target='_blank' title="Twitter" href="https://twitter.com/#!/oysterme"><img src="images/desktop/social-icons/twitter.png" border="0" /></a>
+                        
+                        </div>
+                    
+                    </div>
+                
+                
+                    
+                    
+                    <!-- Left Footer -->
+                    <p class="footer-left">Copyright © 2012 Oyster</p>
+                    <!-- End Left Footer -->
+                    
+                    <br class="clear" />
+                    
+                </div><!-- End Footer -->
+
+            </div><!-- End Content Wrapper -->
+            
+            
+            <!-- Start iPhone Mockup -->
+            <div id="iphone">
+            
+               
+                
+               
+            </div><!-- End iPhone Mockup -->
+            
+        </div><!-- End Wrapper -->
+        
+    </div><!-- End Main Content -->
+    
+</div><!-- End Main Container -->
+
+</body>
 </html>
