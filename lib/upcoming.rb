@@ -76,10 +76,16 @@ class Upcoming
       business_url_key = ["url","venue_url","ticket_url"].detect {|attr| !event[attr].nil? and event[attr] != ""}
       InstadateMobile::Logger.debug "Using url key: " + business_url_key if !business_url_key.nil?
       
+      InstadateMobile::Logger.info "Response from UPCOMING Call: #{event.inspect}"
       
       activity_info = { :latitude => event["latitude"], :longitude => event["longitude"], :name => event["name"],
                         :source_venue_id => event["id"], :business_url => event[business_url_key], :system => "upcoming", :address => event["venue_address"]}
-                              
+                        
+      city = event['venue_city']
+      city ||= event['city']
+      city ||= ""
+      
+      activity_info[:city] = city   
       activity_info[:source_category] = categories.select{ |cat| cat["id"] == event["category_id"].to_i }.map{ |cat| cat["name"] }
 
       if !event["start_date"].empty? && event["start_time"] != -1
