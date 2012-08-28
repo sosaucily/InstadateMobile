@@ -1,0 +1,15 @@
+music: [concert.jpg, concert2.jpg]
+performing\visual arts: [mask.jpg, live_theater.jpg, performance_masks.jpg]
+media:
+social:
+education: [education.jpg, books.jpg]
+commercial:
+festivals: [festival.jpg]
+sports:
+other:
+comedy:
+politics:
+family:
+conferences: [conferences.jpg]
+community:
+default: [pizza_smile.jpg]
