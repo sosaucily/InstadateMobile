@@ -17,6 +17,7 @@ class InstadateMobile < Sinatra::Base
 
   configure :production do
     InstadateMobile::MOCK_API_REQUESTS = false
+    require 'newrelic_rpm'
   end
 
   # If you want the logs displayed you have to do this before the call to setup

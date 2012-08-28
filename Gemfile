@@ -9,6 +9,7 @@ gem 'sinatra-reloader'
 gem 'oauth', '0.4.5'
 gem "rest-client"
 gem "json"
+gem 'newrelic_rpm'
 
 gem 'rake'
 

@@ -66,6 +66,7 @@ GEM
     json_pure (1.6.7)
     mime-types (1.19)
     multi_json (1.0.4)
+    newrelic_rpm (3.4.1)
     oauth (0.4.5)
     rack (1.4.1)
     rack-protection (1.2.0)
@@ -117,6 +118,7 @@ DEPENDENCIES
   dm-postgres-adapter
   dm-sqlite-adapter
   json
+  newrelic_rpm
   oauth (= 0.4.5)
   rack-test
   rake
