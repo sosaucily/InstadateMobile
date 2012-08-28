@@ -20,7 +20,7 @@ class InstadateMobile < Sinatra::Base
     require 'newrelic_rpm'
   end
   
-  InstadateMobile::Story_Pics = Psych.load_file('config/storypics.yml')
+  InstadateMobile::Story_Pics = YAML.load_file('config/storypics.yml')
 
   # If you want the logs displayed you have to do this before the call to setup
   #DataMapper::Logger.new($stdout, :debug)

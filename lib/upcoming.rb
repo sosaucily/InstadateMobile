@@ -103,12 +103,6 @@ class Upcoming
       activity_info[:category_image_name] = category_images.kind_of?(Array) ? category_images.shuffle.first : category_images
       activity_info[:category_image_name] ||= InstadateMobile::Story_Pics['default'].kind_of?(Array) ? InstadateMobile::Story_Pics['default'].shuffle.first : InstadateMobile::Story_Pics['default']
         
-      # if event["total_images"] != 0
-      #   activity_info[:image_url] = event["image"].first["url"]
-      # else
-      #   activity_info[:image_url] = ""
-      # end
-
       activities << activity_info
     end
     
