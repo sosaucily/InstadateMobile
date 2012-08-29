@@ -1,15 +1,15 @@
 music: [concert.jpg, concert2.jpg]
 performing\visual arts: [mask.jpg, live_theater.jpg, performance_masks.jpg]
-media:
-social:
+media: [yellow_abstract_media.jpg, red_abstract_media.jpg]
+social: [social_friends.jpg]
 education: [education.jpg, books.jpg]
-commercial:
+commercial: [shopping.jpg]
 festivals: [festival.jpg]
-sports:
-other:
-comedy:
-politics:
-family:
+sports: [sports.jpg]
+other: [pizza_smile.jpg]
+comedy: [microphone_on_stage.jpg, microphone_silhouette.jpg]
+politics: [capital_building.jpg]
+family: [family.jpg]
 conferences: [conferences.jpg]
-community:
+community: [community_cute_houses.jpg]
 default: [pizza_smile.jpg]
