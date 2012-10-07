@@ -60,13 +60,20 @@ class InstadateMobile < Sinatra::Base
     end
 
     @story = Story.new(params)
-    if @story.save
-      InstadateMobile::Logger.info "Story saved! #{@story.inspect}"
-      @results = @story.to_json(:methods => [:activities])
-      return JSON.parse(@results).merge({story_id:@story.id}).to_json
-    else
+    InstadateMobile::Logger.info "Received Story: #{@story.inspect}"
+    begin
+      if @story.save
+        InstadateMobile::Logger.info "Story saved! #{@story.inspect}"
+        @results = @story.to_json(:methods => [:activities])
+        return JSON.parse(@results).merge({story_id:@story.id}).to_json
+      else
+        InstadateMobile::Logger.error "Story not saved: #{@story.inspect}"
+        error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
+        return [404, error.to_json]
+      end
+    rescue
       InstadateMobile::Logger.error "Story not saved: #{@story.inspect}"
-      error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
+      error = { "error" => { "message" => "There was an error building your Oyster. Please try again." } }
       return [404, error.to_json]
     end
   end

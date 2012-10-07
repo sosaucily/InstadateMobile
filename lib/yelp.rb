@@ -43,6 +43,8 @@ class Yelp
     elsif params[:location]
       yelp_params[:location] = params[:location]
     end
+    
+    yelp_params[:radius] = params[:radius]
 
     return yelp_params
   end

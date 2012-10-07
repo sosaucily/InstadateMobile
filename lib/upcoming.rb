@@ -9,16 +9,19 @@ class Upcoming
     upcoming_params = build_params(params)
     InstadateMobile::Logger.debug "Upcoming parameters: #{params.inspect}"
     response = RestClient.get(ENDPOINT, :params => params)
+    InstadateMobile::Logger.debug "response from upcoming #{response.inspect}"
     InstadateMobile::Logger.debug "Upcoming query number of responses: #{JSON.parse(response)["rsp"]["event"].size.to_s}"
-    JSON.parse(response)["rsp"]['event'].each {|event| 
-      InstadateMobile::Logger.debug event.inspect
-    }
-    InstadateMobile::Logger.debug "Upcoming query response: #{response.inspect}" 
+    # JSON.parse(response)["rsp"]['event'].each {|event| 
+    #   InstadateMobile::Logger.debug event.inspect
+    # }
+    #InstadateMobile::Logger.debug "Upcoming query response: #{response.inspect}" 
     return build_events(response)
-  rescue RestClient::ResourceNotFound => e
-    InstadateMobile::Logger.error "Upcoming API error: #{e.response}"
-    error = e.response
-    raise JSON.parse(error)["rsp"]["error"]["msg"]
+  rescue RestClient::ResourceNotFound
+    InstadateMobile::Logger.error "Upcoming API error:"
+    raise StoryGenerationError, "Upcoming API error: "
+  rescue JSON::ParserError
+    InstadateMobile::Logger.error "Upcoming API error: \n Likely no results"
+    raise StoryGenerationError, "Upcoming API error:  \n Likely no results"
   end
 
   private
@@ -76,7 +79,7 @@ class Upcoming
       business_url_key = ["url","venue_url","ticket_url"].detect {|attr| !event[attr].nil? and event[attr] != ""}
       InstadateMobile::Logger.debug "Using url key: " + business_url_key if !business_url_key.nil?
       
-      InstadateMobile::Logger.info "Response from UPCOMING Call: #{event.inspect}"
+      #InstadateMobile::Logger.info "Response from UPCOMING Call: #{event.inspect}"
       
       activity_info = { :latitude => event["latitude"], :longitude => event["longitude"], :name => event["name"],
                         :source_venue_id => event["id"], :business_url => event[business_url_key], :system => "upcoming", :address => event["venue_address"]}
