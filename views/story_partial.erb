@@ -1,0 +1,66 @@
+
+<div id="story_list" class="story_list" >
+
+</div>
+
+<script id="chapter_html" type="text/html" >
+	<div id="{{chapter_name}}" class="activity activity-{{category}}-evening">
+		<div class="chapter ui-corner-all">
+			<div class="chapter_div">
+				<div id="{{chapter_name}}_img" class="chapter_business_img">
+					<img id="business_image_url" src="{{image_url}}" alt="pic"></img>
+				</div>
+				<div id="{{chapter_name}}" class="chapter_business_text">
+					<div class="chapter-header">
+						<strong>Chapter {{id}}: {{category}}</strong>
+					</div>
+					<div class="chapter-details">
+						<strong>{{business_name}}</strong>
+						<br/>
+						{{source_category}}
+					</div>
+				</div>
+				<div class="chapter_arrow">
+					<img class="chapter_arrow_img" id="{{chapter_name}}_arrow" src="../images/right-arrow.png"></img>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script id="chapter_details_html" type="text/html" >
+	<div id="{{chapter_name}}_details" style="display:none;margin: 10px 10px 10px 10px">
+		<!-- Map -->
+	    <div class="map_container" style="margin-bottom: 10px;">
+			<div class="the_map" id="themap{{id}}">
+			</div>
+		</div>
+		<!--END OF: Map -->
+		<!-- Address and Phone -->
+		<ul data-role="listview" data-theme="a" data-mini="true" data-inset="true">
+			<li>
+				<img src="../images/pin.png" alt="Location" class="ui-li-icon" />
+				<span id="{{chapter_name}}_addr">
+					<a class="addr_link" href="{{map_url}}" target="_blank">{{display_address}}</a>
+				</span>
+			</li>
+			<li>
+				<img src="../images/phone.png" alt="Phone" class="ui-li-icon" />
+				<span id="{{chapter_name}}_phone">
+					<a class="phone_link" href="tel:{{click_phone}}">{{display_phone}}</a>
+				</span>
+			</li>
+			<li>
+				<img src="../images/info.png" alt="Yelp" class="ui-li-icon" />
+				<span id="{{chapter_name}}_api">
+					<a class="api_link" href="{{business_url}}" target="_blank">More details</a>
+				</span>
+				<div style="margin:0 0 0 10px;display:inline-block;">
+					<a href="{{business_url}}" target="_blank">
+						<img id="{{api_image_class}}" src="{{api_image_url}}" />
+					</a>
+				</div>
+			</li>
+		</ul>
+		<!-- END OF: Address and Phone -->
+	</div>
+</script>

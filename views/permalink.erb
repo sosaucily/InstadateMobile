@@ -10,15 +10,27 @@
         <link rel="stylesheet" href="../stylesheets/desktop/reset.css" type="text/css" media="screen, projection" />
         <link rel="stylesheet" href="../stylesheets/desktop/style.css" type="text/css" media="screen, projection" />
         <link rel="stylesheet" href="../stylesheets/desktop/permalink-style.css" type="text/css" media="screen, projection" />
-
+		<link href='http://fonts.googleapis.com/css?family=Terminal+Dosis:400,700' rel='stylesheet' type='text/css' />
+		<link href="../stylesheets/jquery.mobile-1.1.1.min.css" media="all" rel="stylesheet" type="text/css" />
+		<!-- <link href="../stylesheets/main.css" media="all" rel="stylesheet" type="text/css" /> -->
+		<link href="../stylesheets/woody.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="../stylesheets/woody.min.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="../stylesheets/woody_mods.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="../stylesheets/desktop/desktop_story.css" media="all" rel="stylesheet" type="text/css" /> 
         
         <!-- Include Scripts -->    
         <script type="text/javascript" src="../javascripts/jquery.min.js"></script>
+		<script type="text/javascript">
+			window.ranOnce = false;
+		</script>
+		<script type="text/javascript" src="../javascripts/jquery.mobile-1.1.1.min.js"></script>
         <script type="text/javascript" src="../javascripts/desktop/jquery.backgroundPosition.js"></script>
         <script type="text/javascript" src="../javascripts/desktop/jquery.equalize.js"></script>
         <script type="text/javascript" src="../javascripts/desktop/jquery.cycle.lite.min.js"></script>
         <script type="text/javascript" src="../javascripts/desktop/jquery.pngFix.pack.js"></script>
-        <script type="text/javascript" src="../javascripts/desktop/custom.js"></script> 
+        <script type="text/javascript" src="../javascripts/desktop/custom.js"></script>
+		<script type="text/javascript" src="../javascripts/ICanHaz.min.js"></script>
+        <script type="text/javascript" src="../javascripts/desktop/desktop_story.js"></script> 
     
     </head>
 
@@ -163,7 +175,7 @@
             <!-- Start iPhone Mockup -->
             <div id="iphone">
             
-               
+               <%= partial(mypartial) %>
                 
                
             </div><!-- End iPhone Mockup -->
@@ -175,4 +187,14 @@
 </div><!-- End Main Container -->
 
 </body>
+<script type="text/javascript">window.ranOnce
+$(function() { 
+	if (!window.ranOnce) {
+	console.log ("Creating	 story");
+		console.log (<%= results %>);
+		initialize_story(<%= results %>);
+		window.ranOnce = true;
+	}
+});
+</script>
 </html>

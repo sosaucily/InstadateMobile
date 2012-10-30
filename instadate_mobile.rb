@@ -20,6 +20,9 @@ class InstadateMobile < Sinatra::Base
     require 'newrelic_rpm'
   end
   
+  register Sinatra::Partial
+  set :partial_template_engine, :erb
+  
   InstadateMobile::Story_Pics = YAML.load_file('config/storypics.yml')
 
   # If you want the logs displayed you have to do this before the call to setup
@@ -79,8 +82,13 @@ class InstadateMobile < Sinatra::Base
   end
 
   get "/stories/:id" do
+    InstadateMobile::Logger.debug "Getting story for story id #{params[:id]}"
     @story = Story.get(params[:id])
-    redirect to("/") if @story.nil?
-    erb :permalink
+    @results = @story.to_json(:methods => [:activities])
+    InstadateMobile::Logger.debug "got the following story #{@story}"
+    #redirect to("/") if @story.nil?
+    story_results = JSON.parse(@results).merge({story_id:@story.id}).to_json
+    InstadateMobile::Logger.debug "Delivering story results #{story_results}"
+    erb :permalink, :locals => { mypartial: 'story_partial', results: story_results}
   end
 end
