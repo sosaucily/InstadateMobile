@@ -86,7 +86,7 @@ class InstadateMobile < Sinatra::Base
     @story = Story.get(params[:id])
     @results = @story.to_json(:methods => [:activities])
     InstadateMobile::Logger.debug "got the following story #{@story}"
-    #redirect to("/") if @story.nil?
+    redirect to("/") if @story.nil?
     story_results = JSON.parse(@results).merge({story_id:@story.id}).to_json
     InstadateMobile::Logger.debug "Delivering story results #{story_results}"
     erb :permalink, :locals => { mypartial: 'story_partial', results: story_results}
