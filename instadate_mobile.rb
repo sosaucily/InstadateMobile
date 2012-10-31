@@ -1,6 +1,18 @@
 class InstadateMobile < Sinatra::Base
   InstadateMobile::root = File.dirname(__FILE__)
 
+  register Sinatra::Partial
+  set :partial_template_engine, :erb
+  
+  InstadateMobile::Story_Pics = YAML.load_file('config/storypics.yml')
+
+  # If you want the logs displayed you have to do this before the call to setup
+  #DataMapper::Logger.new($stdout, :debug)
+
+  # A Sqlite3 connection to a persistent database
+  DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3:db/instadate.db")
+
+
   configure do
     InstadateMobile::Logger = Logger.new("log/#{ENV['RACK_ENV']}.log")
   end
@@ -8,6 +20,10 @@ class InstadateMobile < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
     InstadateMobile::MOCK_API_REQUESTS = false
+    
+    #Drop and create all the ORM tables
+    DataMapper.auto_migrate!
+    
   end
 
   configure :test do
@@ -20,20 +36,6 @@ class InstadateMobile < Sinatra::Base
     require 'newrelic_rpm'
   end
   
-  register Sinatra::Partial
-  set :partial_template_engine, :erb
-  
-  InstadateMobile::Story_Pics = YAML.load_file('config/storypics.yml')
-
-  # If you want the logs displayed you have to do this before the call to setup
-  #DataMapper::Logger.new($stdout, :debug)
-
-  # A Sqlite3 connection to a persistent database
-  DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3:db/instadate.db")
-
-  #Drop and create all the ORM tables
-  DataMapper.auto_migrate!
-
   DataMapper.finalize
 
   set :public_folder, File.dirname(__FILE__) + '/www'
