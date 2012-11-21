@@ -24,6 +24,11 @@ class InstadateMobile < Sinatra::Base
     #Drop and create all the ORM tables
     DataMapper.auto_migrate!
     
+    before do
+      user_agent = request.env['HTTP_USER_AGENT']
+      @on_mobile = (user_agent.downcase =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) unless user_agent.nil?
+    end
+    
   end
 
   configure :test do
@@ -39,11 +44,6 @@ class InstadateMobile < Sinatra::Base
   DataMapper.finalize
 
   set :public_folder, File.dirname(__FILE__) + '/www'
-  
-  before do
-    user_agent = request.env['HTTP_USER_AGENT']
-    @on_mobile = (user_agent.downcase =~ /(iphone|ipod|ipad|android|blackberry)/ ? true : false) unless user_agent.nil?
-  end
 
   get "/" do
     if (@on_mobile)
