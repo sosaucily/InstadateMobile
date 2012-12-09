@@ -5,7 +5,6 @@ gem 'thin'
 gem 'datamapper', :require => 'data_mapper'
 gem 'sqlite3'
 gem 'dm-sqlite-adapter'
-gem 'sinatra-reloader'
 gem 'oauth', '0.4.5'
 gem "rest-client"
 gem "json"
@@ -14,7 +13,12 @@ gem 'sinatra-partial'
 
 gem 'rake'
 
+group :development do
+  gem 'sinatra-reloader'
+end
+
 group :test do
+  gem 'vcr'
   gem 'webmock'
   gem 'rack-test'
   gem 'rspec'

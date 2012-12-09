@@ -40,186 +40,136 @@ class Story
     self.distance = params[:story_distance].to_i || 5
     InstadateMobile::Logger.debug("setting story distance to #{params[:story_distance].to_i || 5}" )
   end
-
-  private
   
-    #Create the story based on the inputs from the user.
-    def generate_story
-      #Rules engine takes our requirements (which are attributes on this object) and decides who many activities, and of what type, to create
-      
-      if InstadateMobile::MOCK_API_REQUESTS
-        InstadateMobile::Logger.info "MOCK_API_REQUESTS is set to true - Returning mock data."
-        mock_results
-        return
-      end
+  def generate_story
+    
+    if InstadateMobile::MOCK_API_REQUESTS
+      InstadateMobile::Logger.info "MOCK_API_REQUESTS is set to true - Returning mock data."
+      mock_results
+      return
+    end
 
-      #Create a list of activity requests
-      activity_requests = get_activity_requests
-      InstadateMobile::Logger.info "Activity Requests: #{activity_requests.inspect}"
-      activity_results = []
-      
-      has_timed_event = false
-      if (zip.nil? or zip == "")
-        location_parameters = { :lat => latitude, :long => longitude }
+    activity_requests = get_activity_requests
+    activity_results = []
+    
+    has_timed_event = false
+    
+    activity_requests.each do |act|
+      the_system = get_system(act)
+      if the_system == 'Upcoming'
+        has_timed_event = true
+        query_parameters = { date: story_date }
       else
-        location_parameters = { :location => zip }
+        options = { indoor: indoor }
+        query_parameters = VenueHelpers.get_query_options_for_activity_type(act, options)
       end
+      query_parameters.merge!(location_parameters)
       
-      InstadateMobile::Logger.info "Location Params: #{location_parameters}"
+      query_result = fetch_random_result(the_system, query_parameters)
       
-      location_parameters.merge!({ :radius => distance })
+      if query_result.nil? && the_system != 'Yelp'
+        the_system = 'Yelp'
+        query_parameters = VenueHelpers.get_query_options_for_activity_type(act, options)
+        query_parameters.merge! location_parameters
+        query_parameters.delete(:date)
+        query_result = fetch_random_result(the_system, query_parameters)
+      end
 
-      InstadateMobile::Logger.info "Location Params: #{location_parameters}"
-      
-      activity_requests.each do |act|
-        case act
-        when 'day_eat'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_day_eat_query_options.merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = day_eat, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "eat")
-        when 'evening_eat'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_evening_eat_query_options.merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = evening_eat, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "eat")
-        when 'day_do'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_day_do_query_options(indoor).merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = day_do, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "do")
-        when 'day_see'
-          options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
-          the_system = options.shuffle.first
-          query_parameters = {}
-          if the_system == 'Upcoming'
-            has_timed_event = true
-            query_parameters[:date] = story_date
-          elsif the_system == 'Yelp'
-            query_parameters = VenueHelpers.get_day_see_query_options(indoor)
-          end
-          query_parameters.merge! location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = day_see, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          result = fetch_random_result(the_system, query_parameters, "see")
-          if result.nil? && the_system != 'Yelp'
-                      the_system = 'Yelp'
-                      query_parameters = VenueHelpers.get_day_see_query_options(indoor)
-                      query_parameters.merge! location_parameters
-                      query_parameters.delete(:date)
-                      result = fetch_random_result(the_system, query_parameters, "see")
-                    end
-          activity_results << result
-        when 'evening_do'
-          the_system = ['Yelp'].shuffle.first
-          query_parameters = VenueHelpers.get_evening_do_query_options(indoor).merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = evening_do, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "do")
-        when 'evening_see'
-          options = ['Upcoming','Upcoming','Yelp'] #Upcoming will happen 2/3 times
-          query_parameters = {}
-          the_system = options.shuffle.first
-          #the_system = "Upcoming"
-          if the_system == 'Upcoming'
-            has_timed_event = true
-            query_parameters[:date] = story_date
-          elsif the_system == 'Yelp'
-            query_parameters = VenueHelpers.get_evening_see_query_options(indoor)
-          end
-          query_parameters.merge! location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = evening_see, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          result = fetch_random_result(the_system, query_parameters, "see")
-          if result.nil? && the_system != 'Yelp'
-                     the_system = 'Yelp'
-                     query_parameters = VenueHelpers.get_evening_see_query_options(indoor)
-                     query_parameters.merge! location_parameters
-                     query_parameters.delete(:date)
-                     result = fetch_random_result(the_system, query_parameters, "see")
-                   end
-          activity_results << result
-          
-        when 'night_do'
-          the_system = ['Yelp'].shuffle.first
-          #InstadateMobile::LOGGER.info ("Total List is : " + VenueHelpers::NIGHT_DO.inspect)
-          query_parameters = VenueHelpers.get_night_do_query_options(indoor).merge location_parameters
-          #InstadateMobile::LOGGER.info 'schedule = night_do, indoor = ' + indoor
-          #InstadateMobile::LOGGER.info "Running API Command: " + options.shuffle[0].to_s + ".query(" + query_parameters.to_s + ")).shuffle[0]\n"
-          activity_results << fetch_random_result(the_system, query_parameters, "do")
-        end
-      end      
-      #InstadateMobile::LOGGER.info ("\n\n")
+      query_result[:category] = act[act.rindex('_')+1..-1] #Either eat, see, or do
+      activity_results << query_result
+    end      
 
-      activity_results.flatten!
-      
-      InstadateMobile::Logger.info "Activity Results: " + activity_results.inspect
-      
-      #Coming Soon!
-      #build_schedule(activity_results)
-      #query upcoming
-      
-      create_activities(activity_results)
+    activity_results.flatten!
+    
+    InstadateMobile::Logger.info "Activity Results: " + activity_results.inspect
+    
+    #Coming Soon!
+    #build_schedule(activity_results)
+    #query upcoming
+    
+    create_activities(activity_results)
+  end
+    
+  #Create a set of activtiies for this date.
+  def create_activities(activity_results)
+
+    unless activity_results.size == 3 && !activity_results.any? { |ar| ar.nil? }
+      InstadateMobile::Logger.error "Didn't receive three activities!"
+      raise ActivityError, "Unable to generate your activities."
     end
       
-    #Create a set of activtiies for this date.
-    def create_activities(activity_results)
-      #InstadateMobile::LOGGER.info("Creating Activities")
-      #Create an activity based on the quantity of activities
-      if activity_results.size == 3 && !activity_results.any? { |ar| ar.nil? }
-        activity_results.each do |act_data|
-          unless act_data.nil?
-            InstadateMobile::Logger.info "Creating activity: #{act_data.inspect}"
-            #Also need to make sure the result is part of this request type?
-            act_data[:created_at] = Time.now
-            act_data[:updated_at] = Time.now
-            act_data[:story] = self
-            @new_act = Activity.new(act_data)
-            if @new_act.save
-              InstadateMobile::Logger.info "Saving Activity: #{@new_act.inspect}"
-            else
-              InstadateMobile::Logger.error "Activity Errors: #{@new_act.errors.inspect}"
-            end
-          end
-        end
+    activity_results.each do |act_data|
+      InstadateMobile::Logger.info "Creating activity: #{act_data.inspect}"
+      #Also need to make sure the result is part of this request type?
+      act_data.merge!( {created_at: Time.now, updated_at: Time.now, story: self} )
+
+      @new_act = Activity.new(act_data)
+      if @new_act.save
+        InstadateMobile::Logger.info "Saving Activity: #{@new_act.inspect}"
       else
-        InstadateMobile::Logger.error "Didn't receive three activities!"
-        raise ActivityError, "Unable to generate your activities."
+        InstadateMobile::Logger.error "Activity Errors: #{@new_act.errors.inspect}"
       end
     end
     
-    def get_activity_requests
-      case daypart
-      when "day"
-        activity_requests = [['day_do','day_eat','day_see'],['day_see','day_eat','day_do']].shuffle[0]
-        #activity_requests = ['evening_see']
-      when "evening"
-        activity_requests = ['evening_see','evening_eat','night_do']
-        #activity_requests = ['evening_see','evening_see','evening_see']
-      end
-      activity_requests
+  end
+  
+  def get_activity_requests
+    case daypart
+    when "day"
+      activity_requests = [['day_do','day_eat','day_see'],['day_see','day_eat','day_do']].shuffle[0]
+    when "evening"
+      activity_requests = ['evening_see','evening_eat','night_do']
     end
+    activity_requests
+  end
 
-    def fetch_random_result(the_system, query_params, category)
-      InstadateMobile::Logger.info "Querying #{the_system} with #{query_params.inspect}"
-      service = Kernel.const_get(the_system).new
-      results = service.query(query_params)
-      if (results.empty?)
-        return nil
-      end
-      InstadateMobile::Logger.info "Number of results from query: #{results.length}"
-      query_result = results.shuffle[0]
-      query_result[:category] = category
-      InstadateMobile::Logger.info "Returning result #{query_result}"
-      return query_result
-    rescue StoryGenerationError
-      InstadateMobile::Logger.info "No results for you!"
-      nil
+  def fetch_random_result(the_system, query_params)
+    service = Kernel.const_get(the_system).new
+    results = service.query(query_params)
+    if (results.empty?)
+      return nil
     end
+    query_result = results.shuffle[0]
+    return query_result
+  rescue StoryGenerationError
+    InstadateMobile::Logger.info "No results for you!"
+    nil
+  end
 
+  private
+  
+    def get_system(activity_type)
+      case activity_type
+      when 'day_eat'
+        the_system = ['Yelp'].shuffle.first
+      when 'evening_eat'
+        the_system = ['Yelp'].shuffle.first
+      when 'day_do'
+        the_system = ['Yelp'].shuffle.first
+      when 'evening_do'
+        the_system = ['Yelp'].shuffle.first
+      when 'day_see'
+        the_system = ['Upcoming','Upcoming','Yelp'].shuffle.first #Upcoming will happen 2/3 times
+      when 'evening_see'
+        the_system = ['Upcoming','Upcoming','Yelp'].shuffle.first #Upcoming will happen 2/3 times
+      when 'night_do'
+        the_system = ['Yelp'].shuffle.first
+      end
+      return the_system
+    end
+  
+    def location_parameters
+      return @location_parameters if @location_parameters
+      if (zip.nil? or zip == "")
+        @location_parameters = { :lat => latitude, :long => longitude }
+      else
+        @location_parameters = { :location => zip }
+      end
+      @location_parameters.merge!({ :radius => distance })
+      @location_parameters
+    end
+      
+  
     def mock_results
       activity_results = []
 

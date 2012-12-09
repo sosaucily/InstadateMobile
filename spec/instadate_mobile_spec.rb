@@ -19,7 +19,7 @@ describe InstadateMobile do
       header "User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5"
       get '/'
       # TODO: Kind of a hacky way to distinguish mobile and desktop index.html files - find a better way.
-      last_response.body.should include("Instadate - Date ideas, instantly!")
+      last_response.body.should include("OysterMe makes planning activities")
     end
   end
 
@@ -29,7 +29,7 @@ describe InstadateMobile do
         :daypart => "evening", :activity => "indoor" }
     }
 
-    it "creates a new Story in the database" do
+    it "creates a new Story in the database", :vcr do
       expect {
         post "/story/create", params
       }.to change(Story, :count).by(1)
@@ -44,7 +44,7 @@ describe InstadateMobile do
       story.indoor.should == "indoor"
     end
 
-    it "creates new Activities in the database for that story" do
+    it "creates new Activities in the database for that story", :vcr do
       expect {
         post "/story/create", params
       }.to change(Activity, :count).by(3) # Returned by the mock response in the Story class.
@@ -53,7 +53,7 @@ describe InstadateMobile do
       story.activities.should_not be_empty
     end
 
-    it "returns JSON with the story and activities" do
+    it "returns JSON with the story and activities", :vcr do
       post "/story/create", params
       story = Story.last
       story_info = JSON.parse(last_response.body)

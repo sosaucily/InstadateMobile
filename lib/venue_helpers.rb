@@ -10,6 +10,25 @@ module VenueHelpers
   DAY_EAT = []
   EVENING_EAT = []
   
+  def VenueHelpers.get_query_options_for_activity_type(activity_type, options)
+    case activity_type
+    when 'day_eat'
+      query_options = VenueHelpers.get_day_eat_query_options
+    when 'evening_eat'
+      query_options = VenueHelpers.get_evening_eat_query_options
+    when 'day_do'
+      query_options = VenueHelpers.get_day_do_query_options(options[:indoor])
+    when 'evening_do'
+      query_options = VenueHelpers.get_evening_do_query_options(options[:indoor])
+    when 'day_see'
+      query_options = VenueHelpers.get_day_see_query_options(options[:indoor])
+    when 'evening_see'
+      query_options = VenueHelpers.get_evening_see_query_options(options[:indoor])
+    when 'night_do'
+      query_options = VenueHelpers.get_night_do_query_options(options[:indoor])
+    end
+  end
+  
   def VenueHelpers.get_day_eat_query_options
     category = Array.new VenueHelpers::DAY_EAT
     return {:category_filter => category}
@@ -20,7 +39,7 @@ module VenueHelpers
     return {:category_filter => category}
   end
   
-  def VenueHelpers.get_day_do_query_options (p_indoor=false)
+  def VenueHelpers.get_day_do_query_options(p_indoor=false)
     category = Array.new VenueHelpers::DAY_DO
     if (p_indoor == 'indoor')
       category.select! { |elem| 
@@ -34,8 +53,8 @@ module VenueHelpers
     return {:category_filter => category}
   end
   
-  def VenueHelpers.get_day_see_query_options (p_indoor=false)
-    category = Array.new VenueHelpers::DAY_SEE
+  def VenueHelpers.get_evening_do_query_options(p_indoor=false)
+    category = Array.new VenueHelpers::EVENING_DO
     if (p_indoor == 'indoor')
       category.select! { |elem| 
         VenueHelpers::INDOOR.include? elem
@@ -48,8 +67,8 @@ module VenueHelpers
     return {:category_filter => category}
   end
   
-  def VenueHelpers.get_evening_do_query_options (p_indoor=false)
-    category = Array.new VenueHelpers::EVENING_DO
+  def VenueHelpers.get_day_see_query_options(p_indoor=false)
+    category = Array.new VenueHelpers::DAY_SEE
     if (p_indoor == 'indoor')
       category.select! { |elem| 
         VenueHelpers::INDOOR.include? elem

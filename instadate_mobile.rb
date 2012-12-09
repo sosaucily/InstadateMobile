@@ -12,9 +12,10 @@ class InstadateMobile < Sinatra::Base
   # A Sqlite3 connection to a persistent database
   DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3:db/instadate.db")
 
-
   configure do
-    InstadateMobile::Logger = Logger.new("log/#{ENV['RACK_ENV']}.log")
+    unless InstadateMobile::Logger.class.to_s == "Logger"
+      InstadateMobile::Logger = Logger.new("log/#{ENV['RACK_ENV']}.log")
+    end
   end
 
   configure :development do
@@ -30,10 +31,10 @@ class InstadateMobile < Sinatra::Base
     end
     
   end
+  
 
   configure :test do
-    InstadateMobile::MOCK_API_REQUESTS = true
-
+    InstadateMobile::MOCK_API_REQUESTS = false
   end
 
   configure :production do
@@ -76,8 +77,8 @@ class InstadateMobile < Sinatra::Base
         error = { "error" => { "message" => "There was an error saving the record. Please try again." } }
         return [404, error.to_json]
       end
-    rescue
-      InstadateMobile::Logger.error "Story not saved: #{@story.inspect}"
+    rescue StandardError => e
+      InstadateMobile::Logger.error "Story not saved: #{@story.inspect} #{e.message}"
       error = { "error" => { "message" => "There was an error building your Oyster. Please try again." } }
       return [404, error.to_json]
     end
