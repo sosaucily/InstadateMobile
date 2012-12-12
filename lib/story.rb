@@ -52,12 +52,12 @@ class Story
     activity_requests = get_activity_requests
     activity_results = []
     
-    has_timed_event = false
+    # has_timed_event = false
     
     activity_requests.each do |act|
       the_system = get_system(act)
       if the_system == 'Upcoming'
-        has_timed_event = true
+        # has_timed_event = true
         query_parameters = { date: story_date }
       else
         options = { indoor: indoor }
@@ -65,52 +65,42 @@ class Story
       end
       query_parameters.merge!(location_parameters)
       
-      query_result = fetch_random_result(the_system, query_parameters)
-      
-      if query_result.nil? && the_system != 'Yelp'
+      shuffled_results = fetch_shuffled_results(the_system, query_parameters)
+      result_act = create_activity(shuffled_results)
+      # InstadateMobile::Logger.info  "results for system #{the_system} are: #{result_act.inspect}"
+      if !result_act && the_system != 'Yelp'
+        InstadateMobile::Logger.info  "BOOO didn't work, trying again with yelp"
         the_system = 'Yelp'
+        options = { indoor: indoor }
         query_parameters = VenueHelpers.get_query_options_for_activity_type(act, options)
         query_parameters.merge! location_parameters
         query_parameters.delete(:date)
-        query_result = fetch_random_result(the_system, query_parameters)
+        shuffled_results = fetch_shuffled_results(the_system, query_parameters)
+        result_act = create_activity(shuffled_results)
       end
 
-      query_result[:category] = act[act.rindex('_')+1..-1] #Either eat, see, or do
-      activity_results << query_result
+      result_act.category = act[act.rindex('_')+1..-1] #Either eat, see, or do
+      result_act.save!
+      activity_results << result_act
     end      
-
-    activity_results.flatten!
     
-    InstadateMobile::Logger.info "Activity Results: " + activity_results.inspect
-    
-    #Coming Soon!
-    #build_schedule(activity_results)
-    #query upcoming
-    
-    create_activities(activity_results)
+    # InstadateMobile::Logger.info "Activity Results: " + activity_results.inspect
   end
     
   #Create a set of activtiies for this date.
-  def create_activities(activity_results)
-
-    unless activity_results.size == 3 && !activity_results.any? { |ar| ar.nil? }
-      InstadateMobile::Logger.error "Didn't receive three activities!"
-      raise ActivityError, "Unable to generate your activities."
-    end
-      
-    activity_results.each do |act_data|
-      InstadateMobile::Logger.info "Creating activity: #{act_data.inspect}"
-      #Also need to make sure the result is part of this request type?
-      act_data.merge!( {created_at: Time.now, updated_at: Time.now, story: self} )
-
-      @new_act = Activity.new(act_data)
-      if @new_act.save
-        InstadateMobile::Logger.info "Saving Activity: #{@new_act.inspect}"
+  def create_activity(activity_options)
+    # InstadateMobile::Logger.info  "Creating activity with options = #{activity_options.inspect}"
+    activity_options.each do |act|
+      act.merge!( {created_at: Time.now, updated_at: Time.now, story: self} )
+      new_act = Activity.new(act)
+      if new_act.save
+        InstadateMobile::Logger.info "Saving Activity: #{new_act.inspect}"
+        return new_act
       else
-        InstadateMobile::Logger.error "Activity Errors: #{@new_act.errors.inspect}"
+        InstadateMobile::Logger.error "Activity Errors: #{new_act.errors.inspect}"
       end
     end
-    
+    false
   end
   
   def get_activity_requests
@@ -123,17 +113,16 @@ class Story
     activity_requests
   end
 
-  def fetch_random_result(the_system, query_params)
+  def fetch_shuffled_results(the_system, query_params)
     service = Kernel.const_get(the_system).new
     results = service.query(query_params)
     if (results.empty?)
-      return nil
+      return []
     end
-    query_result = results.shuffle[0]
-    return query_result
+    results.shuffle
   rescue StoryGenerationError
     InstadateMobile::Logger.info "No results for you!"
-    nil
+    []
   end
 
   private

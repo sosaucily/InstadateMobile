@@ -79,6 +79,7 @@ class InstadateMobile < Sinatra::Base
       end
     rescue StandardError => e
       InstadateMobile::Logger.error "Story not saved: #{@story.inspect} #{e.message}"
+      InstadateMobile::Logger.error "#{e.backtrace}"
       error = { "error" => { "message" => "There was an error building your Oyster. Please try again." } }
       return [404, error.to_json]
     end

@@ -9,7 +9,7 @@ class Upcoming
     upcoming_params = build_params(params)
     InstadateMobile::Logger.debug "Upcoming parameters: #{params.inspect}"
     response = RestClient.get(ENDPOINT, :params => params)
-    InstadateMobile::Logger.debug "response from upcoming #{response.inspect}"
+    # InstadateMobile::Logger.debug "response from upcoming #{response.inspect}"
     InstadateMobile::Logger.debug "Upcoming query number of responses: #{JSON.parse(response)["rsp"]["event"].size.to_s}"
     # JSON.parse(response)["rsp"]['event'].each {|event| 
     #   InstadateMobile::Logger.debug event.inspect
